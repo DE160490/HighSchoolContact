@@ -23,16 +23,19 @@
             <div class="login_field">
                 <label asp-for="AccountId" class="id" for="id">
                     <h6 class="text_id">ID</h6>
-                    <input asp-for="AccountId" class="input_id" type="text" name="id" id="id">
+                    <input asp-for="AccountId" class="input_id" type="text" name="AccountId">
+                    <span asp-validation-for="AccountId" class="text-danger"></span>
                 </label>
                 <label asp-for="Password" class="password" for="password">
                     <h6 class="text_password">Mật khẩu</h6>
-                    <input asp-for="Password" class="input_password" type="password" name="password" id="password">
+                    <input asp-for="Password" class="input_password" type="password" name="Password">
+                    <span asp-validation-for="Password" class="text-danger"></span>
                 </label>
                 <button class="button_login" type="submit">Đăng nhập</button>
                 <a class="forget_password">Quên mật khẩu</a>
             </div>
         </form>
     </div>
+    <script src="~/js/login.js"></script>
 </body>
 </html>
