@@ -2,11 +2,19 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using X.PagedList;
 
 namespace FBT.Controllers;
 
 public class StudentController : Controller
 {
+    //private readonly FbtContext _dbContext; // Replace FbtContext with your actual DbContext class
+
+    //public StudentController(FbtContext dbContext)
+    //{
+    //    _dbContext = dbContext;
+    //}
+
     // GET: StudentController
     public ActionResult Index(string studentId)
     {
@@ -32,10 +40,24 @@ public class StudentController : Controller
         }
     }
 
-    public ActionResult StudentScore(string studentId)
+    public ActionResult StudentScore(string studentId, int? page)
     {
+        using (var dbContext = new FbtContext())
+        {
+            const int pageSize = 10; // You can adjust this based on your requirement
 
-        return View();
+            var scores = dbContext.Scores
+                .Include(s=> s.Subject)
+                .Where(s => s.StudentId == studentId && s.Semester == (page ?? 1))
+                .OrderBy(s => s.Semester)
+                .ToPagedList(1, pageSize);
+
+            ViewBag.StudentId = studentId;
+            ViewBag.CurrentSemester = page ?? 1;
+
+            return View(scores);
+        }
+
     }
 
 }
