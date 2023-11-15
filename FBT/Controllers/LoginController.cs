@@ -20,10 +20,24 @@ namespace FBT.Controllers
                 if (checkAccount != null)
                 {
                     HttpContext.Session.SetString("username", account.AccountId);
-                    if(checkAccount.Role == 1)
+                    
+                    if(checkAccount.Role == 0)
                     {
                         return RedirectToAction("Index", "Student", new { studentId = account.AccountId});
+                    }else if(checkAccount.Role == 1)
+                    {
+                        return RedirectToAction("Index", "Teacher", new { teacherId = account.AccountId });
+                    }else if(checkAccount.Role == 2)
+                    {
+                        return RedirectToAction("Index", "Parent", new { parentId = account.AccountId });
+                    }else if(checkAccount.Role == 3)
+                    {
+                        return RedirectToAction("Index", "Admin", new { adminId = account.AccountId });
                     }
+                    else
+                    {
+                        return NotFound();
+                    }  
                     return View(account);
                 }
                 else
