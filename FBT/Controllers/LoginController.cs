@@ -13,24 +13,26 @@ namespace FBT.Controllers
 
         [HttpPost]
         public IActionResult Login(Account account) {
+
             using (var dbContext = new FbtContext())
             {
-                Console.WriteLine(account + " " + account.AccountId + " " + account.Password);
-                Account? checkAccount = dbContext.Accounts.FirstOrDefault(s => s.AccountId == account.AccountId);
-                if (checkAccount != null)
+                Account? getAccount = dbContext.Accounts.FirstOrDefault(s => s.AccountId == account.AccountId && s.Password == account.Password);
+                if (getAccount != null)
                 {
-                    HttpContext.Session.SetString("username", account.AccountId);
-                    
-                    if(checkAccount.Role == 0)
+                    var cookieOptions = new CookieOptions();
+                    cookieOptions.Expires = DateTime.Now.AddDays(1);
+                    Response.Cookies.Append("Username", getAccount.AccountId + "$" + getAccount.Password + "$" + getAccount.Role, cookieOptions);
+                    HttpContext.Session.SetString("Username", getAccount.AccountId + "$" + getAccount.Password + "$" + getAccount.Role);
+                    if(getAccount.Role == 0)
                     {
-                        return RedirectToAction("Index", "Student", new { studentId = account.AccountId});
-                    }else if(checkAccount.Role == 1)
+                        return RedirectToAction("Index", "Student", new { studentId = account.AccountId });
+                    }else if(getAccount.Role == 1)
                     {
                         return RedirectToAction("Index", "Teacher", new { teacherId = account.AccountId });
-                    }else if(checkAccount.Role == 2)
+                    }else if(getAccount.Role == 2)
                     {
                         return RedirectToAction("Index", "Parent", new { parentId = account.AccountId });
-                    }else if(checkAccount.Role == 3)
+                    }else if(getAccount.Role == 3)
                     {
                         return RedirectToAction("Index", "Admin", new { adminId = account.AccountId });
                     }
@@ -38,7 +40,6 @@ namespace FBT.Controllers
                     {
                         return NotFound();
                     }  
-                    return View(account);
                 }
                 else
                 {

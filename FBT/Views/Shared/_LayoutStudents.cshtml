@@ -10,6 +10,10 @@
     <title>Home</title>
 </head>
 <body>
+    @{
+        var studentID = @ViewData["Avatar"];
+        var imgString = $"~/img/Student/{studentID}.png";
+    }
     <div class="container-fuild">
         <div class="header">
             <div class="navbar_action">
@@ -17,7 +21,7 @@
                     <a class="icon_notification" href="#"> <i class="fa-regular fa-bell"></i> </a>
                     <a class="user" href="#">
                         <div class="avatar">
-                            <img class="img" src="~/img/Avatar/HS00000000.jpeg" alt="Avatar">
+                            <img class="img" src="@Url.Content(imgString)" alt="Avatar">
                         </div>
                         <div class="text_avatar">
                             Admin <i class="fa-solid fa-caret-down"></i>
@@ -25,7 +29,7 @@
                     </a>
                 </div>
                 <div class="logout_form">
-                    <a class="logout" href="#"> <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất </a>
+                    <a class="logout" asp-controller="Logout" asp-action="Logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất </a>
                 </div>
             </div>
         </div>
@@ -33,17 +37,17 @@
             <a class="logo" href="#"><img src="~/img/Avatar/Logo_ High School Contact.png" alt="Logo" srcset=""></a>
             <div class="menus">
                 <div class="menu">
-                    <a class="menu1" href="#">
+                    <a class="menu1" asp-controller="Student" asp-action="Index" asp-route-id="@studentID">
                         <i class="fa-solid fa-house"></i> Thống kê tổng quan
                     </a>
                 </div>
                 <div class="menu">
-                    <a class="menu1" href="#">
+                    <a class="menu1" asp-controller="Student" asp-action="Index" asp-route-id="@studentID">
                         <i class="fa-solid fa-calendar-days"></i> Thời khóa biểu
                     </a>
                 </div>
                 <div class="menu">
-                    <a class="menu1" href="#">
+                    <a class="menu1" asp-controller="Student" asp-action="StudentScore" asp-route-id="@studentID">
                         <i class="fa-solid fa-book-open"></i> Bảng điểm
                     </a>
                 </div>

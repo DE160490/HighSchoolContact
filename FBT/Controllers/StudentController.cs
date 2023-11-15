@@ -8,19 +8,18 @@ namespace FBT.Controllers;
 
 public class StudentController : Controller
 {
-    //private readonly FbtContext _dbContext; // Replace FbtContext with your actual DbContext class
-
-    //public StudentController(FbtContext dbContext)
-    //{
-    //    _dbContext = dbContext;
-    //}
-
     // GET: StudentController
-    public ActionResult Index(string studentId)
+    public ActionResult Index()
     {
-        Student student = GetStudentData(studentId);
+        var username = HttpContext.Session.GetString("Username");
+        if(username == null)
+        {
+            return RedirectToAction("Login", "Login");
+        }
+        string StudentID = username.Split('$')[0];
+        ViewData["Avatar"] = StudentID;
+        Student student = GetStudentData(StudentID);
         return View(student);
-        //return View();
     }
 
     private Student GetStudentData(string studentId)
@@ -40,21 +39,28 @@ public class StudentController : Controller
         }
     }
 
-    public ActionResult StudentScore(string studentId, int? page)
+    public ActionResult StudentScore(int? page)
     {
+        var username = HttpContext.Session.GetString("Username");
+        if (username == null)
+        {
+            return RedirectToAction("Login", "Login");
+        }
+        string StudentID = username.Split('$')[0];
+
         using (var dbContext = new FbtContext())
         {
             const int pageSize = 10; // You can adjust this based on your requirement
 
             var scores = dbContext.Scores
                 .Include(s=> s.Subject)
-                .Where(s => s.StudentId == studentId && s.Semester == (page ?? 1))
+                .Where(s => s.StudentId == StudentID && s.Semester == (page ?? 1))
                 .OrderBy(s => s.Semester)
                 .ToPagedList(1, pageSize);
 
-            ViewBag.StudentId = studentId;
+            ViewBag.StudentId = StudentID;
             ViewBag.CurrentSemester = page ?? 1;
-
+            ViewData["Avatar"] = StudentID;
             return View(scores);
         }
 
