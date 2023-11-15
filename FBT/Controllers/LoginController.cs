@@ -1,4 +1,5 @@
 ﻿using FBT.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,6 +7,7 @@ namespace FBT.Controllers
 {
     public class LoginController : Controller
     {
+        [AllowAnonymous]
         public IActionResult Login()
         {
             return View();
