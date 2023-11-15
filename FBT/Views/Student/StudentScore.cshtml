@@ -1,0 +1,50 @@
+﻿@using X.PagedList.Mvc.Core;
+@using X.PagedList;
+@model X.PagedList.IPagedList<FBT.Models.Score>
+
+@{
+    ViewData["Title"] = "Scores";
+    Layout = "~/Views/Shared/_LayoutStudents.cshtml";
+}
+
+<style>
+    thead th, tbody td {
+        border: 1px solid #000;
+    }
+</style>
+
+<h2 style="text-align: center;margin:20px 0;">Bảng điểm các môn học kỳ @ViewBag.CurrentSemester</h2>
+
+<table class="table" style="border: 1px solid #000; width: 96%; margin-left: 20px;">
+    <thead >
+        <tr>
+            <th style="background-color: #f8f8f8">Môn Học</th>
+            <th style="background-color: #f8f8f8">Hệ số 1</th>
+            <th style="background-color: #f8f8f8">Hệ số 2</th>
+            <th style="background-color: #f8f8f8">Hệ số 3</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var score in Model)
+        {
+            <tr>
+                <td>@score.Subject?.SubjectName</td>
+                <td>@score.Coefficient1</td>
+                <td>@score.Coefficient2</td>
+                <td>@score.Coefficient3</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="navigation-link" style="margin-left: 20px;padding: 20px;">
+    @if (ViewBag.CurrentSemester == 1)
+    {
+        <a href="@Url.Action("StudentScore", new { studentId = ViewBag.StudentId, page = 2 })">Xem diểm học kỳ 2</a>
+    }
+    else
+    {
+        <a href="@Url.Action("StudentScore", new { studentId = ViewBag.StudentId, page = 1 })">Xem diểm học kỳ 1</a>
+    }
+</div>

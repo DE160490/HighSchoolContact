@@ -19,9 +19,9 @@ public partial class FbtContext : DbContext
 
     public virtual DbSet<Class> Classes { get; set; }
 
-    public virtual DbSet<TakeClass> TakeClasses { get; set; }
+    //public virtual DbSet<TakeClass> TakeClasses { get; set; }
 
-    public virtual DbSet<TeachingSubject> TeachingSubjects { get; set; }
+    //public virtual DbSet<TeachingSubject> TeachingSubjects { get; set; }
 
     public virtual DbSet<ContactBook> ContactBooks { get; set; }
 
@@ -49,7 +49,7 @@ public partial class FbtContext : DbContext
 
     public virtual DbSet<Subject> Subjects { get; set; }
 
-    public virtual DbSet<HomeroomTeacher> HomeroomTeachers { get; set; }
+    //public virtual DbSet<HomeroomTeacher> HomeroomTeachers { get; set; }
 
     public virtual DbSet<SubjectTeacher> SubjectTeachers { get; set; }
 

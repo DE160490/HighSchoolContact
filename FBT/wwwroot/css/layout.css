@@ -167,7 +167,7 @@
     left: 22%;
     background-color: #FFFFFF;
     width: 75%;
-    height: 78%;
+    min-height: 78%;
     box-shadow: 0px 0px 4px #091e424f, 0px 3px 5px #091e4226;
     border-radius: 2px;
 }

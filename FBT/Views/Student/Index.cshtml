@@ -1,0 +1,105 @@
+﻿@model FBT.Models.Student
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutStudents.cshtml";
+}
+@{
+    string studentId = Model.StudentId;
+    string imgPath = $"~/img/Student/{studentId}.png";
+}
+
+<img src="@Url.Content(imgPath)" alt="logo" class="" style="width: 15%; margin: 40px 10%">
+
+
+<div class="container">
+    <h4>Thông tin học sinh</h4>
+    <hr />
+
+    <div class="row" style="">
+        <div class="col-md-6">
+            <table class="table">
+                <!-- Student Information Table -->
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.StudentNavigation.Fullname)</th>
+                    <td>@Html.DisplayFor(model => model.StudentNavigation.Fullname)</td>
+                </tr>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.StudentNavigation.Dob)</th>
+                    <td>@Html.DisplayFor(model => model.StudentNavigation.Dob)</td>
+                </tr>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.StudentNavigation.Gender)</th>
+                    <td>
+                        @{
+                            var gender = Model.StudentNavigation.Gender;
+                            var genderText = gender.HasValue ? (gender.Value ? "Male" : "Female") : "Unknown";
+                        }
+                        @genderText
+                    </td>
+                </tr>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.StudentNavigation.Id)</th>
+                    <td>@Html.DisplayFor(model => model.StudentNavigation.Id)</td>
+                </tr>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.StudentNavigation.PlaceOfResidence)</th>
+                    <td>@Html.DisplayFor(model => model.StudentNavigation.PlaceOfResidence)</td>
+                </tr>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.StudentNavigation.Phone)</th>
+                    <td>@Html.DisplayFor(model => model.StudentNavigation.Phone)</td>
+                </tr>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.StudentNavigation.Email)</th>
+                    <td>@Html.DisplayFor(model => model.StudentNavigation.Email)</td>
+                </tr>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.StudentNavigation.PlaceOfBirth)</th>
+                    <td>@Html.DisplayFor(model => model.StudentNavigation.PlaceOfBirth)</td>
+                </tr>
+            </table>
+        </div>
+    
+        <div class="col-md-6">
+    @*        <h4>Parent Information</h4>*@
+            <table class="table">
+                @foreach (var parent in Model.Parents)
+                {
+                    <tr>
+                        <th>@if (parent.ParentNavigation.Gender == true)
+                            {
+                                <strong>Father:</strong>
+                            }
+                            else
+                            {
+                                <strong>Mother:</strong>
+                            }</th>
+                        <td>@parent.ParentNavigation.Fullname</td>
+                    </tr>
+
+                    <tr>
+                        <th>Phone number</th>
+                        <td>@parent.ParentNavigation.Phone</td>
+                    </tr>
+
+                    <tr>
+                        <th>Address</th>
+                        <td>@parent.ParentNavigation.PlaceOfResidence</td>
+                    </tr>
+
+                    <tr>
+                        <th>Email</th>
+                        <td>@parent.ParentNavigation.Email</td>
+                    </tr>
+
+                    <tr>
+                        <th>Job</th>
+                        <td>@parent.Job</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+
+</div>

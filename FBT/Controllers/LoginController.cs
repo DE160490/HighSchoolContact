@@ -20,6 +20,7 @@ namespace FBT.Controllers
                 if (checkAccount != null)
                 {
                     HttpContext.Session.SetString("username", account.AccountId);
+                    
                     if(checkAccount.Role == 0)
                     {
                         return RedirectToAction("Index", "Student", new { studentId = account.AccountId});
@@ -36,7 +37,7 @@ namespace FBT.Controllers
                     else
                     {
                         return NotFound();
-                    }
+                    }  
                     return View(account);
                 }
                 else
