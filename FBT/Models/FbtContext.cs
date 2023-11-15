@@ -57,7 +57,7 @@ public partial class FbtContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=DESKTOP-3J5AMMQ;uid=sa;pwd=123456789;database=FBT;TrustServerCertificate=True");
+        => optionsBuilder.UseSqlServer("Server=DESKTOP-DPRVVV0\\MSSQLSERVER2022;Database=FBT;UID=sa;PWD=1;TrustServerCertificate=True;Trusted_Connection=True;MultipleActiveResultSets=True;Encrypt=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
