@@ -1,0 +1,102 @@
+﻿@model List<FBT.Models.Schedule>
+
+
+@{
+    ViewData["Title"] = "TimeTable";
+    Layout = "~/Views/Shared/_LayoutStudents.cshtml";
+}
+<style>
+    table, table td, th, tbody td{
+        border: 1px solid #000;
+    }
+    .schedule-info{
+        border: 1px solid #000;
+        margin: 5px;
+        padding: 5px;
+        padding-top: 15px;
+    }
+    .time{
+        background-color:rgb(92, 184, 92);
+        color:#fff;
+        text-align: center;
+        border-radius: 8px;
+    }
+    .subject{
+        background-color:rgb(247, 51, 51);
+        color:#fff;
+        text-align: center;
+        border-radius: 8px;
+    }
+    .teacher{
+        background-color:rgb(29, 161, 242);
+        color:#fff;
+        text-align: center;
+        border-radius: 8px;
+    }
+</style>
+
+<h4 class="text-center p-4">Thời khoá biểu của @ViewBag.StudentName (@(ViewBag.WeekBegins?.ToString("dd/MM/yyyy") ?? "N/A") - @(ViewBag.WeekEnds?.ToString("dd/MM/yyyy") ?? "N/A"))</h4>
+
+<form method="post" action="@Url.Action("TimeTable", new { studentId = ViewBag.StudentId })" style="float:left">
+    <input type="hidden" name="studentId" value="@ViewBag.StudentId">
+    <input type="hidden" name="weekBegins" value="@(ViewBag.WeekBegins != null ? ViewBag.WeekBegins.AddDays(-7).ToString("dd/MM/yyyy") : "")">
+    <input type="hidden" name="weekEnds" value="@(ViewBag.weekEnds != null ? ViewBag.weekEnds.AddDays(-7).ToString("dd/MM/yyyy") : "")">
+    <input type="text" id="dateRange" name="dateRange" value="@ViewBag.WeekBegins?.AddDays(-7).ToString("dd/MM/yyyy") - @ViewBag.WeekEnds?.AddDays(-7).ToString("dd/MM/yyyy")" readonly>
+    <input type="submit" value="Tuần Trước">
+</form>
+
+<form method="post" action="@Url.Action("TimeTable", new { studentId = ViewBag.StudentId })" style="float:right">
+    <input type="hidden" name="studentId" value="@ViewBag.StudentId">
+    <input type="hidden" name="weekBegins" value="@(ViewBag.WeekBegins != null ? ViewBag.WeekBegins.AddDays(7).ToString("dd/MM/yyyy") : "")">
+    <input type="hidden" name="weekEnds" value="@(ViewBag.weekEnds != null ? ViewBag.weekEnds.AddDays(7).ToString("dd/MM/yyyy") : "")">
+    <input type="text" id="dateRange" name="dateRange" value="@ViewBag.WeekBegins?.AddDays(7).ToString("dd/MM/yyyy") - @ViewBag.WeekEnds?.AddDays(7).ToString("dd/MM/yyyy")" readonly>
+    <input type="submit" value="Tuần Sau">
+</form>
+
+
+
+<table class="table" style="margin-top:55px">
+    <thead>
+    <tr>
+        <td><strong>Thứ</strong></td>
+
+        @foreach (var dayOfWeek in Model.Select(item => item.DayOfWeek?.ToString("ddd - dd/MM")).Distinct())
+        {
+            string dayInVietnamese = dayOfWeek.Substring(0, 4) switch
+            {
+                "Mon " => "Thứ Hai" + dayOfWeek.Substring(3),
+                "Tue " => "Thứ Ba" + dayOfWeek.Substring(3),
+                "Wed " => "Thứ Tư" + dayOfWeek.Substring(3),
+                "Thu " => "Thứ Năm" + dayOfWeek.Substring(3),
+                "Fri " => "Thứ Sáu" + dayOfWeek.Substring(3),
+                "Sat " => "Thứ Bảy" + dayOfWeek.Substring(3),
+                "Sun " => "Chủ Nhật" + dayOfWeek.Substring(3),
+                _ => dayOfWeek
+            };
+            <th>@dayInVietnamese</th>
+        }
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var lecture in Model.Select(item => item.Lecture).Distinct())
+    {
+        <tr>
+            <td><strong>@(lecture == "Morning" ? "Buổi Sáng" : lecture == "Afternoon" ? "Buổi Chiều" : lecture) </strong></td>
+            @foreach (var dayOfWeek in Model.Select(item => item.DayOfWeek?.ToString("ddd - dd/MM")).Distinct())
+            {
+                <td>
+                    @foreach (var scheduleItem in Model.Where(item => item.DayOfWeek?.ToString("ddd - dd/MM") == dayOfWeek && item.Lecture == lecture).OrderBy(item => item.TimeStart))
+                    {
+                        <div class="schedule-info">
+                            <p class="teacher">@scheduleItem.Teacher?.TeacherNavigation?.Fullname</p>
+                            <p class="subject">@scheduleItem.Subject?.SubjectName</p>
+                            <p class="time">@($"{scheduleItem.TimeStart:hh\\:mm} - {scheduleItem.TimeEnd:hh\\:mm}")</p>
+                        </div>
+                    }
+                </td>
+            }
+        </tr>
+    }
+    </tbody>
+</table>
+

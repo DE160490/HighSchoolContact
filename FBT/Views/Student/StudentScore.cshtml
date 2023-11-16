@@ -11,6 +11,14 @@
     thead th, tbody td {
         border: 1px solid #000;
     }
+
+    .navigation-link a{
+        text-decoration:none;
+        background: blue;
+        color:#fff;
+        padding: 10px;
+        margin: 20px 20px;
+    }
 </style>
 
 <h2 style="text-align: center;margin:20px 0;">Bảng điểm các môn học kỳ @ViewBag.CurrentSemester</h2>
@@ -38,13 +46,13 @@
     </tbody>
 </table>
 
-<div class="navigation-link" style="margin-left: 20px;padding: 20px;">
+<div class="navigation-link">
     @if (ViewBag.CurrentSemester == 1)
     {
-        <a href="@Url.Action("StudentScore", new { studentId = ViewBag.StudentId, page = 2 })">Xem diểm học kỳ 2</a>
+        <a class="btn btn-outline-info" href="@Url.Action("StudentScore", new { studentId = ViewBag.StudentId, page = 2 })">Xem diểm học kỳ 2</a>
     }
     else
     {
-        <a href="@Url.Action("StudentScore", new { studentId = ViewBag.StudentId, page = 1 })">Xem diểm học kỳ 1</a>
+        <a class="btn btn-outline-info" href="@Url.Action("StudentScore", new { studentId = ViewBag.StudentId, page = 1 })">Xem diểm học kỳ 1</a>
     }
 </div>
