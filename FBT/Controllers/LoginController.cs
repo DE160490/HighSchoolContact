@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 
 namespace FBT.Controllers
 {
@@ -50,5 +51,63 @@ namespace FBT.Controllers
             }
         }
 
+        public IActionResult ForgetPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ForgetPassword(string AccountId)
+        {
+            using(var dbContext = new FbtContext())
+            {
+                var personInformation = dbContext.PersonInformations.Include(a => a.Account).FirstOrDefault(a => a.Id == AccountId);
+                if (personInformation == null)
+                {
+                    ModelState.AddModelError("AccountId", "ID không tồn tại!");
+                }
+
+                Random random = new Random();
+                string randomString = new string(Enumerable.Repeat(0, 6).Select(i => (char)(random.Next(10) + '0')).ToArray());
+                HttpContext.Session.SetString("UserResetPassword", randomString + "$" + AccountId);
+                Console.WriteLine(randomString);
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult ForgetPasswordConfirm(string code)
+        {
+            var codeSession = HttpContext.Session.GetString("UserResetPassword");
+
+            if(code != codeSession.Split("$")[0])
+            {
+                return RedirectToAction("ForgetPassword");
+            }
+
+            return RedirectToAction("ResetPassword");
+        }
+
+        public IActionResult ResetPassword() { 
+            return View(); 
+        }
+
+        [HttpPost]
+        public IActionResult ResetPassword(string password, string confirmpassword)
+        {
+            if(password == confirmpassword)
+            {
+                var accountId = HttpContext.Session.GetString("UserResetPassword").Split("$")[1];
+
+                using (var dbContext = new FbtContext())
+                {
+                    var account = dbContext.Accounts.FirstOrDefault(a => a.AccountId == accountId);
+                    account.Password = password;
+                    dbContext.SaveChanges();
+                }
+                return RedirectToAction("Login");
+            }
+            return RedirectToAction("ResetPassword");
+        }
     }
 }
