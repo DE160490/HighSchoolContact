@@ -1,4 +1,5 @@
-﻿using FBT.Models;
+﻿using FBT.Filter;
+using FBT.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -70,6 +71,8 @@ namespace FBT.Controllers
                 Random random = new Random();
                 string randomString = new string(Enumerable.Repeat(0, 6).Select(i => (char)(random.Next(10) + '0')).ToArray());
                 HttpContext.Session.SetString("UserResetPassword", randomString + "$" + AccountId);
+                var message = MailUtils.SendGmail("Gmail sẽ gửi", "Gmail sẽ nhận", "Code Confirm", randomString, "Gmail sẽ gửi", "Mật khẩu gmail !(Không cần thiết)");
+                Console.WriteLine(message);
                 Console.WriteLine(randomString);
             }
             return View();
