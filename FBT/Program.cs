@@ -6,11 +6,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddSession();
+
 // Add services to the container.
-//builder.Services.AddControllersWithViews(options =>
-//{
-//    options.Filters.Add<LoginFilter>();
-//});
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<LoginFilter>();
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

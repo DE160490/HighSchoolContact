@@ -1,11 +1,11 @@
-﻿using FBT.Models;
+﻿using FBT.Filter;
+using FBT.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using X.PagedList;
 
 namespace FBT.Controllers;
-
 public class StudentController : Controller
 {
     // GET: StudentController
