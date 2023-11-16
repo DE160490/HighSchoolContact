@@ -70,8 +70,15 @@ public class StudentController : Controller
 
 
     //-------------------------------------------------------Thoi Khoa Bieu
-    public ActionResult TimeTable(string studentId)
+    public ActionResult TimeTable()
     {
+        var username = HttpContext.Session.GetString("Username");
+        if (username == null)
+        {
+            return RedirectToAction("Login", "Login");
+        }
+        string StudentID = username.Split('$')[0];
+        ViewData["Avatar"] = StudentID;
 
         using (var dbContext = new FbtContext())
         {
@@ -79,7 +86,7 @@ public class StudentController : Controller
             var student = dbContext.Students
                 .Include(s => s.Classes)
                 .Include(s => s.StudentNavigation)
-                .FirstOrDefault(s => s.StudentId == studentId);
+                .FirstOrDefault(s => s.StudentId == StudentID);
 
             // Check if the student exists
             if (student != null)
@@ -108,7 +115,7 @@ public class StudentController : Controller
                     ViewBag.WeekBegins = weekBegins;
                     ViewBag.WeekEnds = weekEnds;
 
-                    ViewBag.StudentId = studentId;
+                    ViewBag.StudentId = StudentID;
                     return View(schedules);
                 }
             }
@@ -120,10 +127,17 @@ public class StudentController : Controller
 
 
     [HttpPost]
-    public ActionResult TimeTable(string studentId, string weekBegins, string weekEnds)
+    public ActionResult TimeTable(string weekBegins, string weekEnds)
     {
         DateTime? weekBeginsDate = null;
         DateTime? weekEndsDate = null;
+        var username = HttpContext.Session.GetString("Username");
+        if (username == null)
+        {
+            return RedirectToAction("Login", "Login");
+        }
+        string StudentID = username.Split('$')[0];
+        ViewData["Avatar"] = StudentID;
 
         if (DateTime.TryParseExact(weekBegins, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedWeekBegins))
         {
@@ -140,7 +154,7 @@ public class StudentController : Controller
             var student = dbContext.Students
                 .Include(s => s.Classes)
                 .Include(s => s.StudentNavigation)
-                .FirstOrDefault(s => s.StudentId == studentId);
+                .FirstOrDefault(s => s.StudentId == StudentID);
 
             if (student != null)
             {
@@ -157,7 +171,7 @@ public class StudentController : Controller
                     ViewBag.StudentName = student.StudentNavigation.Fullname;
                     ViewBag.WeekBegins = weekBeginsDate;
                     ViewBag.WeekEnds = weekEndsDate;
-                    ViewBag.StudentId = studentId;
+                    ViewBag.StudentId = StudentID;
                     return View(schedules);
                 }
             }

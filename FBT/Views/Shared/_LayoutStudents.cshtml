@@ -23,9 +23,9 @@
                         <div class="avatar">
                             <img class="img" src="@Url.Content(imgString)" alt="Avatar">
                         </div>
-                        <div class="text_avatar">
+                        @* <div class="text_avatar">
                             @studentID <i class="fa-solid fa-caret-down"></i>
-                        </div>
+                        </div> *@
                     </a>
                 </div>
                 <div class="logout_form">
@@ -43,7 +43,7 @@
                     </a>
                 </div>
                 <div class="menu">
-                    <a class="menu1" asp-controller="Student" asp-action="Index" asp-route-id="@studentID">
+                    <a class="menu1" asp-controller="Student" asp-action="TimeTable" asp-route-id="@studentID">
                         <i class="fa-solid fa-calendar-days"></i> Thời khóa biểu
                     </a>
                 </div>
@@ -53,8 +53,8 @@
                     </a>
                 </div>
                 <div class="menu">
-                    <a class="menu1" href="#">
-                        <i class="fa-solid fa-book"></i> Học bạ
+                    <a class="menu1" asp-controller="Student" asp-action="StudentScore" asp-route-id="@studentID">
+                        <i class="fa-solid fa-book-open"></i> Học bạ
                     </a>
                 </div>
             </div>
