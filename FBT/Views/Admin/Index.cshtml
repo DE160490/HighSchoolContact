@@ -1,0 +1,72 @@
+﻿@model IEnumerable<FBT.Models.Account>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<h1>Quản Lý Account</h1>
+
+<button class="btn btn-primary" style="float:right; margin-right:20px">
+    <a asp-controller="Admin" asp-action="Create" style="color:#fff; text-decoration: none;"><i class="fa-solid fa-plus"></i> Tạo Account Mới</a>
+</button>
+<table class="table">
+    <thead>
+        <tr>
+
+            <th>
+                @Html.DisplayNameFor(model => model.AccountId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AccountNavigation.Fullname)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Password)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Role)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.AccountId)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.AccountNavigation.Fullname)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Password)
+            </td>
+            <td>
+                @if (item.Role == 0)
+                {
+                    <text>Học Sinh</text>
+                }
+                else if (item.Role == 1)
+                {
+                    <text>Phụ Huynh</text>
+                }
+                else if (item.Role == 2)
+                {
+                    <text>Giáo Viên</text>
+                }
+                else
+                {
+                    <text>Unknown Role</text>
+                }
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.AccountId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.AccountId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.AccountId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
