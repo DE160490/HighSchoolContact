@@ -1,0 +1,104 @@
+﻿@model FBT.Models.PersonInformation
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+<style>
+    .detail{
+        padding: 20px;
+    }
+</style>
+
+<div class="detail">
+    <h4 style="text-align: center">Thông tin chi tiết</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            AccountId
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+
+        <dt class="col-sm-2">
+                Họ Và Tên
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Fullname)
+        </dd>
+
+        <dt class="col-sm-2">
+            Giới Tính
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Gender == true)
+            {
+                <text>Nam</text>
+            }
+            else
+            {
+                <text>Nữ</text>
+            }
+        </dd>
+
+        <dt class="col-sm-2">
+            Ngày Tháng Năm Sinh
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Dob)
+        </dd>
+
+        <dt class="col-sm-2">
+            Nơi Sinh
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PlaceOfBirth)
+        </dd>
+
+        <dt class="col-sm-2">
+            Nơi Cư Trú
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.PlaceOfResidence)
+        </dd>
+
+        <dt class="col-sm-2">
+            Số Điện Thoại
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Phone)
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt class="col-sm-2">
+            Dân Tộc
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Ethnic)
+        </dd>
+
+        <dt class="col-sm-2">
+            Tín Ngưỡng
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Religion)
+        </dd>
+
+        <dt class="col-sm-2">
+                Mật Khẩu
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Account.Password)
+        </dd>
+    </dl>
+</div>
+<p>
+    <a asp-controller="Admin" asp-action="Index" class="btn btn-primary" style="margin-left: 20px">Quay về</a>
+</p>

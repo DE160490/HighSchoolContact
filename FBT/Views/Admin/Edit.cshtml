@@ -1,26 +1,17 @@
 ﻿@model FBT.Models.PersonInformation
 
 @{
-    ViewData["Title"] = "Create Account";
+    ViewData["Title"] = "Edit Account";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 
-<h1>Tạo Account</h1>
+<h1>Cập Nhật Account</h1>
 
-<form asp-controller="Admin" asp-action="Create" method="post" style="padding: 20px">
-@*    <div class="form-group">
-        <label asp-for="Id" class="control-label"></label>
-        <input asp-for="Id" class="form-control" />
-        <span asp-validation-for="Id" class="text-danger"></span>
-    </div>*@
-
+<form asp-controller="Admin" asp-action="Edit" method="post" style="padding: 20px">
     <div class="form-group">
-        <label for="Role" class="control-label">Role</label>
-        <select id="Role" name="Role" class="form-control">
-            <option value="HSS">Student</option>
-            <option value="HSP">Parent</option>
-            <option value="HSE">Teacher</option>
-        </select>
+        <label asp-for="Id" class="control-label"></label>
+        <input asp-for="Id" class="form-control" type="hidden" />
+        <span asp-validation-for="Id" class="text-danger"></span>
     </div>
 
     <div class="form-group">
@@ -82,17 +73,16 @@
 
     <div>
         <label for="Password" class="">Password</label>
-        <input id="Password" name="Password" class="form-control" />
+        <input id="Password" name="Password" class="form-control" value="@ViewData["Password"]" />
         <span asp-validation-for="Account.Password" class="text-danger"></span>
     </div>
 
 
 
     <div class="form-group">
-        <button type="submit" class="btn btn-primary" style="width:150px;">Tạo</button>
+        <button type="submit" class="btn btn-primary" style="width:150px;">Cập Nhật</button>
         <a asp-controller="Admin" asp-action="Index" class="btn btn-secondary" style="width: 150px">Quay Về</a>
     </div>
 
 
 </form>
-

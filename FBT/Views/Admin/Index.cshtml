@@ -1,13 +1,22 @@
 ﻿@model IEnumerable<FBT.Models.Account>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Index1";
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
+<style>
+    .heading{
+        text-align: center;
+        padding: 10px;
+    }
+    tbody td{
+        line-height: 40px;
+    }
+</style>
 
-<h1>Quản Lý Account</h1>
+<h1 class="heading">Quản Lý Account</h1>
 
-<button class="btn btn-primary" style="float:right; margin-right:20px">
+<button class="btn btn-dark" style="float:right; margin-right:20px">
     <a asp-controller="Admin" asp-action="Create" style="color:#fff; text-decoration: none;"><i class="fa-solid fa-plus"></i> Tạo Account Mới</a>
 </button>
 <table class="table">
@@ -18,13 +27,13 @@
                 @Html.DisplayNameFor(model => model.AccountId)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AccountNavigation.Fullname)
+                Họ Và Tên
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Password)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Role)
+                Vai Trò
             </th>
             <th></th>
         </tr>
@@ -56,15 +65,19 @@
                 {
                     <text>Giáo Viên</text>
                 }
+                else if (item.Role == 3)
+                {
+                    <text>Admin</text>
+                }
                 else
                 {
                     <text>Unknown Role</text>
                 }
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.AccountId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.AccountId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.AccountId">Delete</a>
+                <a asp-controller="Admin" asp-action="Edit" asp-route-id="@item.AccountId" class="btn btn-primary">Cập Nhật</a> |
+                <a asp-controller="Admin" asp-action="Details" asp-route-id="@item.AccountId" class="btn btn-primary">Chi Tiết</a> |
+                <a asp-controller="Admin" asp-action="Delete" asp-route-id="@item.AccountId" class="btn btn-primary">Xoá</a>
             </td>
         </tr>
 }
