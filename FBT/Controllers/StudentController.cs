@@ -79,32 +79,27 @@ public class StudentController : Controller
             if (student != null)
             {
                 // Assuming a student is associated with only one class
+                var classId = student.Classes.FirstOrDefault()?.ClassId;
+
+                var now = DateTime.Now;
+                DateTime weekBegins = now.AddDays(-(int)now.DayOfWeek + (int)DayOfWeek.Monday).Date;
+                DateTime weekEnds = weekBegins.AddDays(7).AddSeconds(-1);
+                // Retrieve the schedules for the classId
+
+                var schedules = dbContext.Schedules
+                    .Where(s => s.ClassId == classId && s.WeekBegins >= weekBegins && s.WeekEnds <= weekEnds)
+                    .Include(s => s.Teacher.TeacherNavigation)
+                    .Include(s => s.Subject)
+                    .ToList();
 
 
-                if (student != null)
-                {
+                ViewBag.StudentName = student.StudentNavigation.Fullname;
+                ViewBag.WeekBegins = weekBegins;
+                ViewBag.WeekEnds = weekEnds;
 
-                    var classId = student.Classes.FirstOrDefault()?.ClassId;
-
-                    var now = DateTime.Now;
-                    DateTime weekBegins = now.AddDays(-(int)now.DayOfWeek + (int)DayOfWeek.Monday).Date;
-                    DateTime weekEnds = weekBegins.AddDays(7).AddSeconds(-1);
-                    // Retrieve the schedules for the classId
-
-                    var schedules = dbContext.Schedules
-                        .Where(s => s.ClassId == classId && s.WeekBegins >= weekBegins && s.WeekEnds <= weekEnds)
-                        .Include(s => s.Teacher.TeacherNavigation)
-                        .Include(s => s.Subject)
-                        .ToList();
-
-
-                    ViewBag.StudentName = student.StudentNavigation.Fullname;
-                    ViewBag.WeekBegins = weekBegins;
-                    ViewBag.WeekEnds = weekEnds;
-
-                    ViewBag.StudentId = studentId;
-                    return View(schedules);
-                }
+                ViewBag.StudentId = studentId;
+                return View(schedules);
+                
             }
 
             // Handle the case where the student or class is not found

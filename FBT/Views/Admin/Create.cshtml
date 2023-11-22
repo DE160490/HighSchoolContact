@@ -8,18 +8,18 @@
 <h1>Tạo Account</h1>
 
 <form asp-controller="Admin" asp-action="Create" method="post" style="padding: 20px">
-@*    <div class="form-group">
-        <label asp-for="Id" class="control-label"></label>
-        <input asp-for="Id" class="form-control" />
-        <span asp-validation-for="Id" class="text-danger"></span>
+    @*    <div class="form-group">
+    <label asp-for="Id" class="control-label"></label>
+    <input asp-for="Id" class="form-control" />
+    <span asp-validation-for="Id" class="text-danger"></span>
     </div>*@
 
     <div class="form-group">
         <label for="Role" class="control-label">Role</label>
         <select id="Role" name="Role" class="form-control">
-            <option value="HSS">Student</option>
-            <option value="HSP">Parent</option>
-            <option value="HSE">Teacher</option>
+            <option value="HSS">Học Sinh</option>
+            <option value="HSP">Phụ Huynh</option>
+            <option value="HSE">Giáo Viên</option>
         </select>
     </div>
 
@@ -83,8 +83,33 @@
     <div>
         <label for="Password" class="">Password</label>
         <input id="Password" name="Password" class="form-control" />
-        <span asp-validation-for="Account.Password" class="text-danger"></span>
+        @*        <span asp-validation-for="Account.Password" class="text-danger"></span>*@
     </div>
+
+
+
+    <!-- Add these fields to your form -->
+    <div id="studentIdField" style="display: none;">
+        <label for="StudentID" class="">Student ID</label>
+        <input id="StudentID" name="StudentID" class="form-control" />
+    </div>
+
+    <div id="jobField" style="display: none;">
+        <label for="Job" class="">Job</label>
+        <input id="Job" name="Job" class="form-control" />
+    </div>
+
+    <div id="mainExpertiseField" style="display: none;">
+        <label for="MainExpertise" class="">Main Expertise</label>
+        <input id="MainExpertise" name="MainExpertise" class="form-control" />
+    </div>
+
+    <div id="positionField" style="display: none;">
+        <label for="Position" class="">Position</label>
+        <input id="Position" name="Position" class="form-control" />
+    </div>
+
+    <!-- Add this script to show or hide the fields based on the selected role -->
 
 
 
@@ -94,5 +119,39 @@
     </div>
 
 
+
 </form>
+
+<script>
+    document.getElementById('Role').addEventListener('change', function () {
+        var role = this.value;
+
+        // Show or hide fields based on the selected role
+        document.getElementById('studentIdField').style.display = (role === 'HSP') ? 'block' : 'none';
+        document.getElementById('jobField').style.display = (role === 'HSP') ? 'block' : 'none';
+        document.getElementById('mainExpertiseField').style.display = (role === 'HSE') ? 'block' : 'none';
+        document.getElementById('positionField').style.display = (role === 'HSE') ? 'block' : 'none';
+
+        // Enable or disable fields based on visibility
+        document.getElementById('Job').disabled = (role !== 'HSP');
+        document.getElementById('MainExpertise').disabled = (role !== 'HSE');
+        document.getElementById('Position').disabled = (role !== 'HSE');
+        document.getElementById('StudentID').disabled = (role !== 'HSP');
+
+        // Remove hidden fields from the form before submitting
+        var form = document.forms[0];
+        if (form) {
+            form.addEventListener('submit', function () {
+                if (role !== 'HSP') {
+                    form.removeChild(document.getElementById('StudentID'));
+                    form.removeChild(document.getElementById('Job'));
+                }
+                if (role !== 'HSE') {
+                    form.removeChild(document.getElementById('MainExpertise'));
+                    form.removeChild(document.getElementById('Position'));
+                }
+            });
+        }
+    });
+</script>
 
