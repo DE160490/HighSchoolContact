@@ -1,0 +1,133 @@
+﻿@model List<FBT.Models.Schedule>
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+@* <script src="https://code.jquery.com/jquery-latest.js"></script> *@
+@* <link rel="stylesheet" href="../Views/Admin/ManagerTimeTable.cshtml.css" /> *@
+<link rel="stylesheet" href="~/css/Schedule_ManagerTimeTable.css" />
+<div class="container-fluid time_table_content">
+    <div class="timetable_action">
+        <h5>Thời khóa biểu</h5>
+        <div class="groupbtn_timetable">
+            <form asp-controller="Admin" asp-action="CreateTimeTable" method="get">
+                <button type="submit" style="border: none; background-color: #4B49AC; color: #FFFFFF; border-radius: 5px; font-size: 14px; padding: 5px;">
+                    Tạo thời khóa biểu
+                </button>
+                @* <button type="submit"><a asp-controller="Admin" asp-action="TeachingSchedule">Tạo lịch giảng dạy</a></button> *@
+            </form>
+        </div>
+    </div>
+    <div class="content_timetable">
+        <div class="navication_timetable">
+            <form asp-controller="Admin" asp-action="ManagerTimeTable" method="get">
+                <button class="active" type="submit"> Thời khóa biểu theo lớp </button>
+            </form>
+            <form asp-controller="Admin" asp-action="ManagerTimeTableOfTeacher" method="get">
+                <button type="submit">Thời khóa biểu theo giáo viên </button>
+            </form>
+        </div>
+        <div class="view_timetable">
+            <div class="groupview_action">
+                <form asp-controller="Admin" , asp-action="ManagerTimeTable" method="post">
+
+                    <select name="schoolYear" onchange="updateGrade()">
+                        
+                    </select>
+                    <select name="gradeID" onchange="updateClasses()">
+
+                    </select>
+                    <select name="classID" onchange="updateWeek()">  
+                        
+                    </select>
+                    <select name="weekBegin">
+
+                    </select>
+                    
+                    <button type="submit">Xuất thời khóa biểu</button>
+
+                </form>
+                <h6>Thời khóa biểu lớp 10A1</h6>
+            </div>
+            <table class="time_schedule">
+                @* <div class="time_page">
+                    <button type="submit">Trước</button>
+                    <p>13/11/2023 - 19/11/2023</p>
+                    <button type="submit">Sau</button>
+                </div> *@
+                @if(Model != null)
+                {
+                    <div class="time_page">
+                        @foreach (var weekstart in Model.Select(item => item.WeekBegins.Value.ToString("dd/MM/yyyy")).Distinct())
+                        {
+                            @foreach (var weekend in Model.Where(item => item.WeekBegins.Value.ToString("dd/MM/yyyy") == weekstart).Select(item => item.WeekEnds.Value.ToString("dd/MM/yyyy")).Distinct())
+                            {    
+                                <p>@weekstart - @weekend</p>
+                            }
+                        }
+                    </div>
+                }
+                <tr>
+                    <th colspan="2">Thời gian</th>
+                    <th>Thứ hai</th>
+                    <th>Thứ ba</th>
+                    <th>Thứ tư</th>
+                    <th>Thứ năm</th>
+                    <th>Thứ sáu</th>
+                    <th>Thứ bảy</th>
+                    <th>Chủ nhật</th>
+                </tr>
+                @if(Model != null){
+
+                    string[] dayofweekFormat = new string[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
+
+                    @foreach (var lecture in Model.Select(item => item.Lecture).Distinct())
+                    {
+                        var count = 0;
+                        
+                        @foreach (var time in Model.Where(item => item.Lecture == lecture).Select(item => item.TimeStart).Distinct())
+                        {
+
+                            var rowspan = Model.Where(item => item.Lecture == lecture).Select(item => item.TimeStart).Distinct().GroupBy(item => item).Count();
+                            
+                            <tr>
+                                @if(count == 0)
+                                {
+                                    <td rowspan="@rowspan">@lecture </td>
+                                    count++;
+                                }
+                                <td>@time </td>
+                
+                                @foreach(var days in dayofweekFormat)
+                                {
+                                    var check = false;
+                                    @foreach(var subject in Model.Where(item => item.TimeStart == time && item.DayOfWeek.Value.DayOfWeek.ToString() == days)){
+                                        if(subject.SubjectId != null)
+                                        {
+                                            <td>
+                                                @subject.Subject?.SubjectName
+                                                <p class="teacher" style="margin: 8px 0 0 0; padding: 0; font-size: 9px; color: red;">@subject.Teacher?.TeacherNavigation.Fullname</p>
+                                            </td>
+                                            
+                                            check = true;
+                                        }
+                                    }
+                                    if (!check)
+                                    {
+                                        <td></td>
+                                    }
+                                }
+                            </tr>
+                        }
+
+                    }
+                }
+                else
+                {
+                    <tr class="justify-content-end text-center">No Data</tr>
+                }
+
+            </table>
+        </div>
+    </div>
+</div>
+<script src="../Views/Admin/ManagerTimeTable.cshtml.js"></script>
