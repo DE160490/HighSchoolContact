@@ -1,0 +1,55 @@
+﻿@model List<FBT.Models.Schedule>
+@{
+    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<link rel="stylesheet" href="~/css/Schedule_CreateTimeTable.css">
+@* <link rel="stylesheet" href="../Views/Admin/CreateTimeTable.cshtml.js"/> *@
+<div class="create">
+    <form>
+        <div class="row field1">
+            <div class="col-2 schoolyear_class">
+                <p>Niên khóa - Lớp học</p>
+                <select name="class" id="class" required onchange="updateWeekbySchoolYear()">
+                </select>
+                <span class="error" id="class"></span>
+            </div>
+            <div class="col-2 lecture">
+                <p>Buổi học</p>
+                <select name="lecture" id="lecture" required onchange="updateTimebylecture()">
+                    <option value="Morning">Buổi sáng</option>
+                    <option value="Afternoon">Buổi chiều</option>
+                </select>
+                <span class="error" id="lecture"></span>
+            </div>
+            <div class="col-2 weekbegin">
+                <p>Tuần bắt đầu</p>
+                <input type="date" name="weekbegins" id="weekbegins" required onchange="updateWeekEndbyWeekStart()" />
+                <span class="error"></span>
+            </div>
+            <div class="col-2 weekend">
+                <p>Tuần kết thúc</p>
+                <input type="date" name="weekends" id="weekends" required onchange="updateDayofWeekSubject()" />
+                <span class="error"></span>
+            </div>
+            <div class="col-2 timestart">
+                <p>Thời gian bắt đầu</p>
+                <input type="time" min="00:00" max="23:59" name="timestart" required onchange="updateTimeEndByTimeStart()" />
+            </div>
+            <div class="col-2 timeend">
+                <p>Thời gian kết thúc</p>
+                <input type="time" min="00:00" max="23:59" name="timeend" required />
+            </div>
+        </div>
+        <div class="field3">
+        </div>
+        <button class="btn_sub" type="submit">Tạo</button>
+        <div class="field4">
+            <table id="subject">
+            </table>
+        </div>
+    </form>
+    <div class="test">
+    </div>
+</div>
+<script src="../Views/Admin/CreateTimeTable.cshtml.js"></script>

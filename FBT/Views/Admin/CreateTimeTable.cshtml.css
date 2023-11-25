@@ -1,0 +1,141 @@
+﻿.create {
+    margin: 12px;
+    background-color: #ffffff;
+}
+
+.col-2 {
+    display: block;
+    margin: 0;
+}
+
+    .col-2 > input, .col-2 > select {
+        width: 160px;
+        font-size: 14px;
+    }
+
+p {
+    font-size: 14px;
+    font-weight: 500;
+    margin: 10px 0 5px 0;
+}
+
+.schoolyear_class {
+    grid-area: element1;
+}
+
+.lecture {
+    grid-area: element2;
+}
+
+.weekbegin {
+    grid-area: element3;
+}
+
+.weekend {
+    grid-area: element4;
+}
+
+.timestart {
+    grid-area: element5;
+}
+
+.timeend {
+    grid-area: element6;
+}
+
+
+
+.field_mon {
+    grid-area: mon;
+}
+
+.field_tue {
+    grid-area: tue;
+}
+
+.field_wed {
+    grid-area: wed;
+}
+
+.field_thu {
+    grid-area: thu;
+}
+
+.field_fri {
+    grid-area: fri;
+}
+
+.field_sat {
+    grid-area: sat;
+}
+
+.field_sun {
+    grid-area: sun;
+}
+
+.field3 {
+    display: grid;
+    grid-template-areas: "mon tue wed thu fri sat sun";
+}
+
+.btn_sub {
+    border: none;
+    border-radius: 5px;
+    padding: 2px;
+    margin-top: 20px;
+    width: 80px;
+    background-color: #4B49AC;
+    color: #FFFFFF;
+    height: 28px;
+}
+
+select, input {
+    width: 150px;
+    font-size: 13px;
+    padding: 0 0 0 5px;
+    border-radius: 2px;
+    border: 1px #B4B7C6 solid;
+    color: #000;
+    outline: none;
+}
+
+.field4 {
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+@media only screen and (max-width: 1400px) {
+    .field1 {
+        padding-bottom: 30px;
+        border: #4B49AC 1px solid;
+        display: grid;
+        grid-template-areas: "element1 element2"
+            "element3 element4"
+            "element5 element6";
+    }
+
+    p {
+        font-size: 14px;
+        width: 160px;
+    }
+
+    .field3 {
+        display: grid;
+        grid-template-areas: "mon tue"
+            "wed thu"
+            "fri sat "
+            "sun emp";
+    }
+}
+
+table {
+    justify-content: center;
+}
+
+th, td {
+    border: 1px #4B49AC solid;
+    text-align: center;
+    padding: 10px;
+    font-size: 13px;
+}
