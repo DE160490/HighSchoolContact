@@ -5,11 +5,12 @@
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
 }
 <style>
-    .heading{
+    .heading {
         text-align: center;
         padding: 10px;
     }
-    tbody td{
+
+    tbody td {
         line-height: 40px;
     }
 </style>
@@ -39,51 +40,49 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
+        @foreach (var item in Model)
+        {
+            <tr>
 
-            <td>
-                @Html.DisplayFor(modelItem => item.AccountId)
-            </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AccountId)
+                </td>
 
-            <td>
-                @Html.DisplayFor(modelItem => item.AccountNavigation.Fullname)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Password)
-            </td>
-            <td>
-                @if (item.Role == 0)
-                {
-                    <text>Học Sinh</text>
-                }
-                else if (item.Role == 1)
-                {
-                    <text>Phụ Huynh</text>
-                }
-                else if (item.Role == 2)
-                {
+                <td>
+                    @Html.DisplayFor(modelItem => item.AccountNavigation.Fullname)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Password)
+                </td>
+                <td>
+                    @if (item.Role == 0)
+                    {
+                        <text>Học Sinh</text>
+                    }
+                    else if (item.Role == 1)
+                    {
                         <text>Giáo Viên</text>
-                }
-                else if(item.Role == 3)
-                {
-                    <text>Admin</text>
-                }
-                else if (item.Role == 3)
-                {
-                    <text>Admin</text>
-                }
-                else
-                {
-                    <text>Unknown Role</text>
-                }
-            </td>
-            <td>
-                <a asp-controller="Admin" asp-action="Edit" asp-route-id="@item.AccountId" class="btn btn-primary">Cập Nhật</a> |
-                <a asp-controller="Admin" asp-action="Details" asp-route-id="@item.AccountId" class="btn btn-primary">Chi Tiết</a> |
-                <a asp-controller="Admin" asp-action="Delete" asp-route-id="@item.AccountId" class="btn btn-primary">Xoá</a>
-            </td>
-        </tr>
-}
+
+                    }
+                    else if (item.Role == 2)
+                    {
+                        <text>Phụ Huynh</text>
+                    }
+                    else if (item.Role == 3)
+                    {
+                        <text>Admin</text>
+                    }
+                    else
+                    {
+                        <text>Unknown Role</text>
+                    }
+                </td>
+                <td>
+                    <a asp-controller="Admin" asp-action="Edit" asp-route-id="@item.AccountId" class="btn btn-primary">Cập Nhật</a> |
+                    <a asp-controller="Admin" asp-action="Details" asp-route-id="@item.AccountId" class="btn btn-primary">Chi Tiết</a> |
+                    <a asp-controller="Admin" asp-action="Delete" asp-route-id="@item.AccountId" class="btn btn-primary">Xoá</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

@@ -31,10 +31,9 @@ public class AdminController : Controller
         return View();
     }
 
-
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult Create([Bind("Id,Fullname,Gender,Dob,PlaceOfBirth,PlaceOfResidence,Phone,Email,Ethnic,Religion")] PersonInformation personInformation, string Password, string Role)
+    public IActionResult Create([Bind("Id,Fullname,Gender,Dob,PlaceOfBirth,PlaceOfResidence,Phone,Email,Ethnic,Religion")] PersonInformation personInformation, string Password, string Role, string? Job, string? MainExpertise, string? Position, string? StudentID)
     {
         using (var dbContext = new FbtContext())
         {
@@ -62,12 +61,13 @@ public class AdminController : Controller
             {
                 ModelState.AddModelError("Id", "A person with this Id already exists.");
             }
-            //if (dbContext.PersonInformations.Any(p => p.Id == personInformation.Id))
-            //{
-            //    ModelState.AddModelError("Id", "A person with this Id already exists.");
-            //}
+
             if (ModelState.IsValid)
             {
+                var errors = ModelState
+                    .Where(x => x.Value.Errors.Count > 0)
+                    .Select(x => new { x.Key, Errors = x.Value.Errors.Select(e => e.ErrorMessage) })
+                    .ToArray();
 
                 dbContext.PersonInformations.Add(personInformation);
                 dbContext.SaveChanges();
@@ -77,24 +77,20 @@ public class AdminController : Controller
                     personInformation.Account = new Account();
                 }
 
-
-                // Create the Account
                 var account = personInformation.Account;
                 account.AccountId = personInformation.Id;
-                //account.Password = "password123";
                 account.Password = Password;
-
 
                 string idPrefix = personInformation.Id.Substring(0, 3);
                 if (idPrefix == "HSS")
                 {
                     account.Role = 0;
                 }
-                else if (idPrefix == "HSP")
+                else if (idPrefix == "HSE")
                 {
                     account.Role = 1;
                 }
-                else if (idPrefix == "HSE")
+                else if (idPrefix == "HSP")
                 {
                     account.Role = 2;
                 }
@@ -104,6 +100,23 @@ public class AdminController : Controller
                 }
 
                 dbContext.Accounts.Add(account);
+
+                if (Role == "HSS")
+                {
+                    var student = new Student { StudentId = personInformation.Id };
+                    dbContext.Students.Add(student);
+                }
+                else if (Role == "HSE")
+                {
+                    var teacher = new Teacher { TeacherId = personInformation.Id, MainExpertise = MainExpertise, Position = Position ?? "Giáo Viên" };
+                    dbContext.Teachers.Add(teacher);
+                }
+                else if (Role == "HSP")
+                {
+                    var parent = new Parent { ParentId = personInformation.Id, Job = Job, StudentId = StudentID };
+                    dbContext.Parents.Add(parent);
+                }
+
                 dbContext.SaveChanges();
 
                 return RedirectToAction("Index", "Admin");
@@ -195,6 +208,98 @@ public class AdminController : Controller
             return View(personInformation);
         }
     }
+
+
+
+    //--------------------------------------------DETAIlS
+    public IActionResult Details(string id)
+    {
+        using (var dbContext = new FbtContext())
+        {
+            // Lấy Data trong PersonInformations Table dựa vào AccountId
+            var personInformation = dbContext.PersonInformations
+                .Include(p => p.Account)
+                .FirstOrDefault(p => p.Id == id);
+
+            if (personInformation == null)
+            {
+                return NotFound();
+            }
+
+            return View(personInformation);
+        }
+    }
+
+    //--------------------------------------Delete
+    public IActionResult Delete(string id)
+    {
+        using (var dbContext = new FbtContext())
+        {
+            var personInformation = dbContext.PersonInformations.Find(id);
+            if (personInformation == null)
+            {
+                return NotFound();
+            }
+
+            return View(personInformation);
+        }
+    }
+
+
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public IActionResult DeleteConfirmed(string id)
+    {
+        using (var dbContext = new FbtContext())
+        {
+            var personInformation = dbContext.PersonInformations.Find(id);
+            if (personInformation == null)
+            {
+                return NotFound();
+            }
+
+            // Xoá Data trong Table Account trước
+            var account = dbContext.Accounts.Find(id);
+            if (account != null)
+            {
+                dbContext.Accounts.Remove(account);
+            }
+
+            // Delete Data trong table tương ứng dựa và Id
+            string idPrefix = id.Substring(0, 3);
+            if (idPrefix == "HSS")
+            {
+                var student = dbContext.Students.Find(id);
+                if (student != null)
+                {
+                    dbContext.Students.Remove(student);
+                }
+            }
+            else if (idPrefix == "HSE")
+            {
+                var teacher = dbContext.Teachers.Find(id);
+                if (teacher != null)
+                {
+                    dbContext.Teachers.Remove(teacher);
+                }
+            }
+            else if (idPrefix == "HSP")
+            {
+                var parent = dbContext.Parents.FirstOrDefault(p => p.ParentId == id);
+                if (parent != null)
+                {
+                    dbContext.Parents.Remove(parent);
+                }
+            }
+
+            // Delete Data trong PersonInformation Table sau cùng
+            dbContext.PersonInformations.Remove(personInformation);
+            dbContext.SaveChanges();
+
+            return RedirectToAction("Index", "Admin");
+        }
+    }
+
 
     //// Thời khóa biểu Admin
     ///
@@ -413,70 +518,6 @@ public class AdminController : Controller
         using (var dbContext = new FbtContext())
         {
             return Json(dbContext.PersonInformations.Where(item => item.Id.StartsWith("HSE")).ToList());
-        }
-    }
-
-
-    //--------------------------------------------DETAIlS
-    public IActionResult Details(string id)
-    {
-        using (var dbContext = new FbtContext())
-        {
-            // Retrieve the PersonInformation with the associated Account
-            var personInformation = dbContext.PersonInformations
-                .Include(p => p.Account)
-                .FirstOrDefault(p => p.Id == id);
-
-            if (personInformation == null)
-            {
-                return NotFound();
-            }
-
-            return View(personInformation);
-        }
-    }
-
-    //--------------------------------------Delete
-    public IActionResult Delete(string id)
-    {
-        using (var dbContext = new FbtContext())
-        {
-            var personInformation = dbContext.PersonInformations.Find(id);
-            if (personInformation == null)
-            {
-                return NotFound();
-            }
-
-            return View(personInformation);
-        }
-    }
-
-    [HttpPost, ActionName("Delete")]
-    [ValidateAntiForgeryToken]
-    public IActionResult DeleteConfirmed(string id)
-    {
-        using (var dbContext = new FbtContext())
-        {
-            var personInformation = dbContext.PersonInformations.Find(id);
-            if (personInformation == null)
-            {
-                return NotFound();
-            }
-
-            // Delete the associated Account first
-            var accountId = personInformation.Id;
-            var account = dbContext.Accounts.Find(accountId);
-            if (account != null)
-            {
-                dbContext.Accounts.Remove(account);
-                dbContext.SaveChanges();
-            }
-
-            // Then, delete the PersonInformation
-            dbContext.PersonInformations.Remove(personInformation);
-            dbContext.SaveChanges();
-
-            return RedirectToAction("Index");
         }
     }
 
