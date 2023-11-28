@@ -18,12 +18,14 @@
         </div>
     </div>
     <div class="content_timetable">
+        <div class="navication_timetable">
         <form asp-controller="Admin" asp-action="ManagerTimeTable" method="get">
             <button type="submit"> Thời khóa biểu theo lớp </button>
         </form>
         <form asp-controller="Admin" asp-action="ManagerTimeTableOfTeacher" method="get">
             <button class="active" type="submit">Thời khóa biểu theo giáo viên </button>
         </form>
+        </div>
         <div class="view_timetable">
             <div class="groupview_action">
                 <form asp-controller="Admin" , asp-action="ManagerTimeTableOfTeacher" method="post">
@@ -76,38 +78,40 @@
 
                         @foreach (var time in Model.Where(item => item.Lecture == lecture).Select(item => item.TimeStart).Distinct())
                         {
+                            @foreach (var times in Model.Where(item => item.Lecture == lecture && item.TimeStart == time).Select(item => item.TimeEnd).Distinct())
+                            {
+                                var rowspan = Model.Where(item => item.Lecture == lecture).Select(item => item.TimeStart).Distinct().GroupBy(item => item).Count();
 
-                            var rowspan = Model.Where(item => item.Lecture == lecture).Select(item => item.TimeStart).Distinct().GroupBy(item => item).Count();
-
-                            <tr>
-                                @if (count == 0)
-                                {
-                                    <td rowspan="@rowspan">@lecture </td>
-                                    count++;
-                                }
-                                <td>@time </td>
-
-                                @foreach (var days in dayofweekFormat)
-                                {
-                                    var check = false;
-                                    @foreach (var subject in Model.Where(item => item.TimeStart == time && item.DayOfWeek.Value.DayOfWeek.ToString() == days))
+                                <tr>
+                                    @if (count == 0)
                                     {
-                                        if (subject.SubjectId != null)
-                                        {
-                                            <td>
-                                                @subject.Subject?.SubjectName
-                                                <p class="teacher" style="margin: 8px 0 0 0; padding: 0; font-size: 9px; color: red;">@subject.Class.ClassName</p>
-                                            </td>
+                                        <td rowspan="@rowspan">@lecture </td>
+                                        count++;
+                                    }
+                                    <td>@time - @times </td>
 
-                                            check = true;
+                                    @foreach (var days in dayofweekFormat)
+                                    {
+                                        var check = false;
+                                        @foreach (var subject in Model.Where(item => item.TimeStart == time && item.DayOfWeek.Value.DayOfWeek.ToString() == days))
+                                        {
+                                            if (subject.SubjectId != null)
+                                            {
+                                                <td>
+                                                    @subject.Subject?.SubjectName
+                                                    <p class="teacher" style="margin: 8px 0 0 0; padding: 0; font-size: 9px; color: red;">@subject.Class.ClassName</p>
+                                                </td>
+
+                                                check = true;
+                                            }
+                                        }
+                                        if (!check)
+                                        {
+                                            <td></td>
                                         }
                                     }
-                                    if (!check)
-                                    {
-                                        <td></td>
-                                    }
-                                }
-                            </tr>
+                                </tr>
+                            }
                         }
 
                     }

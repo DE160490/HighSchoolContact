@@ -1,5 +1,4 @@
-﻿
-* {
+﻿* {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -49,16 +48,23 @@ button {
 .navication_timetable {
     border-bottom: 1px solid #B4B7C6;
     margin-bottom: 20px;
+    display: flex;
 }
 
-    .navication_timetable > button {
+    .navication_timetable > form {
+        display: flex;
+        background-color: #ffffff;
+    }
+
+    .navication_timetable > form > button {
         font-size: 14px;
         background-color: #ffffff;
+        color: #000;
         border: none;
         padding: 5px;
     }
 
-        .navication_timetable > button.active {
+        .navication_timetable > form > button.active {
             color: #4b49ac;
             border: none;
             padding: 10px;
