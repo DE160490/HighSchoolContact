@@ -20,7 +20,9 @@
                     <option value="Morning">Buổi sáng</option>
                     <option value="Afternoon">Buổi chiều</option>
                 </select>
-                <span class="error" id="lecture"></span>
+                <div asp-validation-summary="ModelOnly">
+                    @Html.ValidationMessage("FailCreate");
+                </div>
             </div>
             <div class="col-2 weekbegin">
                 <p>Tuần bắt đầu</p>

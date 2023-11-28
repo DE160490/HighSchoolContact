@@ -3,6 +3,7 @@ using FBT.Reponsitory;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Packaging.Signing;
 using System;
 using System.Security.Principal;
 using X.PagedList;
@@ -11,7 +12,8 @@ namespace FBT.Controllers;
 
 public class AdminController : Controller
 {
-    // GET: AdminController
+//// ====================================== Manager Account ======================================
+    // Get: AdminController
     public ActionResult Index()
     {
         using (var dbContext = new FbtContext())
@@ -24,13 +26,14 @@ public class AdminController : Controller
         }
     }
 
-    //---------------------------------------CREATE
-
+//  --------------------------------------- Create ---------------------------------------
+    // Get
     public IActionResult Create()
     {
         return View();
     }
-
+    
+    // Post
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult Create([Bind("Id,Fullname,Gender,Dob,PlaceOfBirth,PlaceOfResidence,Phone,Email,Ethnic,Religion")] PersonInformation personInformation, string Password, string Role, string? Job, string? MainExpertise, string? Position, string? StudentID)
@@ -126,8 +129,8 @@ public class AdminController : Controller
         }
     }
 
-    //--------------------------------------------------EDIT
-    // GET: Admin/Edit/5
+//  --------------------------------------- Edit ---------------------------------------
+    // Get: Admin/Edit/5
     public IActionResult Edit(string id)
     {
         using (var dbContext = new FbtContext())
@@ -147,6 +150,7 @@ public class AdminController : Controller
         }
     }
 
+    // Post
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult Edit(string id, [Bind("Id,Fullname,Gender,Dob,PlaceOfBirth,PlaceOfResidence,Phone,Email,Ethnic,Religion")] PersonInformation personInformation, string Password)
@@ -209,9 +213,8 @@ public class AdminController : Controller
         }
     }
 
-
-
-    //--------------------------------------------DETAIlS
+//  --------------------------------------- Detail ---------------------------------------
+    // Get
     public IActionResult Details(string id)
     {
         using (var dbContext = new FbtContext())
@@ -230,7 +233,8 @@ public class AdminController : Controller
         }
     }
 
-    //--------------------------------------Delete
+//  --------------------------------------- Delete ---------------------------------------
+    // Get
     public IActionResult Delete(string id)
     {
         using (var dbContext = new FbtContext())
@@ -245,7 +249,7 @@ public class AdminController : Controller
         }
     }
 
-
+    // Post
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
     public IActionResult DeleteConfirmed(string id)
@@ -300,9 +304,10 @@ public class AdminController : Controller
         }
     }
 
+//// ====================================== Manager Schedule ======================================
 
-    //// Thời khóa biểu Admin
-    ///
+//  --------------------------------------- Schedule Class ---------------------------------------
+    // Get
     public IActionResult ManagerTimeTable()
     {
         DateTime dateTime = DateTime.Now;
@@ -337,6 +342,7 @@ public class AdminController : Controller
         }
     }
 
+    // Post
     [HttpPost]
     public IActionResult ManagerTimeTable(string schoolYear, string gradeID, string classID, string weekBegin)
     {
@@ -351,20 +357,20 @@ public class AdminController : Controller
 
             if (schoolYeardb)
             {
-                Console.WriteLine("=====================================================");
-                Console.WriteLine("School Year: " + schoolYeardb);
+                //Console.WriteLine("=====================================================");
+                //Console.WriteLine("School Year: " + schoolYeardb);
                 var gradeNamedb = dbContext.Grades.Any(s => s.GradeId == gradeID);
                 if(gradeNamedb)
                 {
-                    Console.WriteLine("Grade: " + gradeNamedb);
+                    //Console.WriteLine("Grade: " + gradeNamedb);
                     var classNamedb = dbContext.Classes.FirstOrDefault(s => s.ClassId == classID);
                     if(classNamedb != null)
                     {
-                        Console.WriteLine("Classes: " + classNamedb.ClassId);
+                        //Console.WriteLine("Classes: " + classNamedb.ClassId);
                         string [] time = weekBegin.Split("&&");
                         DateTime weekBeginConvert;
                         DateTime weekEndConvert;
-                        Console.WriteLine(time[0] + " --- " + time[1]);
+                        //Console.WriteLine(time[0] + " --- " + time[1]);
 
                         bool success1 = DateTime.TryParse(time[0], out weekBeginConvert);
                         bool success2 = DateTime.TryParse(time[1], out weekEndConvert);
@@ -373,11 +379,11 @@ public class AdminController : Controller
                         {
                             Console.WriteLine(weekBeginConvert + "    " + weekEndConvert);
                             DateTime format = weekEndConvert.AddHours(24).AddSeconds(-1);
-                            var scheduledb = dbContext.Schedules.Where(s => s.ClassId == classNamedb.ClassId && s.WeekBegins <= weekBeginConvert && s.WeekEnds >= weekEndConvert)
+                            var scheduledb = dbContext.Schedules.Where(s => s.ClassId == classNamedb.ClassId && s.WeekBegins >= weekBeginConvert && s.WeekEnds <= weekEndConvert)
                                 .Include(s => s.Class.Grade.SchoolYear)
                                 .Include(s => s.Teacher.TeacherNavigation)
                                 .Include(s => s.Subject).ToList();
-                            Console.WriteLine("Data: "+ scheduledb + " with " + schoolYear + " " + gradeID + " " + classID + " " + weekBeginConvert + " " + format);
+                            //Console.WriteLine("Data: "+ scheduledb + " with " + schoolYear + " " + gradeID + " " + classID + " " + weekBeginConvert + " " + format);
 
                             var cookieOptions = new CookieOptions();
                             cookieOptions.Expires = DateTime.Now.AddDays(1);
@@ -400,6 +406,8 @@ public class AdminController : Controller
         return View();
     }
 
+//  --------------------------------------- Schedule Teacher ---------------------------------------
+    // Get
     public IActionResult ManagerTimeTableOfTeacher()
     {
         DateTime dateTime = DateTime.Now;
@@ -416,6 +424,7 @@ public class AdminController : Controller
         return View();
     }
 
+    // Post
     [HttpPost]
     public IActionResult ManagerTimeTableOfTeacher( string datetime, string teacherID)
     {
@@ -424,14 +433,13 @@ public class AdminController : Controller
             string[] time = datetime.Split("&&");
             DateTime weekBeginConvert;
             DateTime weekEndConvert;
-            Console.WriteLine(time[0] + " --- " + time[1]);
 
             bool success1 = DateTime.TryParse(time[0], out weekBeginConvert);
             bool success2 = DateTime.TryParse(time[1], out weekEndConvert);
 
             if (success1 && success2)
             {
-                var scheduledb = dbContext.Schedules.Where(item => item.TeacherId == teacherID && item.WeekBegins <= weekBeginConvert && item.WeekEnds >= weekEndConvert)
+                var scheduledb = dbContext.Schedules.Where(item => item.TeacherId == teacherID && item.WeekBegins >= weekBeginConvert && item.WeekEnds <= weekEndConvert)
                             .Include(s => s.Class.Grade.SchoolYear)
                             .Include(s => s.Teacher.TeacherNavigation)
                             .Include(s => s.Subject).ToList();
@@ -444,6 +452,8 @@ public class AdminController : Controller
         return View();
     }
 
+//  --------------------------------------- Create Schedule ---------------------------------------
+    // Get
     public IActionResult CreateTimeTable()
     {
         using(var dbContext = new FbtContext())
@@ -458,6 +468,7 @@ public class AdminController : Controller
         return View();
     }
 
+    // Post
     [HttpPost]
     public IActionResult CreateTimeTable(string obj)
     {
@@ -465,13 +476,86 @@ public class AdminController : Controller
         schedules = Handle.SplitScheduleInput(obj);
         schedules.ForEach(schedule =>
         {
-            var getSchedule = schedule.ScheduleId + " " + schedule.TeacherId + " " + schedule.ClassId + " " + schedule.SubjectId + " " +
-            schedule.WeekBegins + " " + schedule.WeekEnds + " " + schedule.DayOfWeek + " " + schedule.Lecture + " " + schedule.TimeStart + " " + schedule.TimeEnd;
-            Console.WriteLine(getSchedule);
+            using(var dbContext = new FbtContext())
+            {
+                var scheduleCheck = dbContext.Schedules.Any(item => item.ClassId == schedule.ClassId && item.DayOfWeek == schedule.DayOfWeek && item.TimeStart == schedule.TimeStart && item.TimeEnd == schedule.TimeEnd);
+                if (!scheduleCheck)
+                {
+                    var scheduleCheck2 = dbContext.Schedules.Any(item => item.TeacherId == schedule.TeacherId && item.DayOfWeek == schedule.DayOfWeek && item.TimeStart == schedule.TimeStart && item.TimeEnd == schedule.TimeEnd);
+                    if (!scheduleCheck2)
+                    {
+                        schedule.ScheduleId = Handle.CreateScheduleID();
+                        dbContext.Schedules.Add(schedule);
+                        dbContext.SaveChanges();
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("FailCreate", "Giờ học: " + schedule.TimeStart + " - " + schedule.TimeEnd + " đã được sắp xếp cho giáo viên. Vui lòng kiểm tra lại trước khi nhập vào!");
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("FailCreate", "Giờ học: " + schedule.TimeStart + " - " + schedule.TimeEnd + " đã có. Vui lòng kiểm tra lại trước khi nhập vào!");
+                }
+            }
         });
         return View();
     }
 
+//  --------------------------------------- Update Schedule ---------------------------------------
+    [HttpPost]
+    public IActionResult UpdateTimeTable(string scheduleEdit)
+    {
+        string[] element = scheduleEdit.Split('$');
+        if(element.Length > 0)
+        {
+            using(var dbContext = new FbtContext())
+            {
+                var schedule = dbContext.Schedules.FirstOrDefault(item => item.ScheduleId == element[0]);
+                if (schedule != null)
+                {
+                    //var schedule = scheduleID + "$" + teacherID.value + "$" + subjectID.value + "$" + timeStart.value + "$" + timeEnd.value;
+                    var checkSubject = dbContext.SubjectTeachers.Any(item => item.SubjectId == element[2] && item.TeacherId == element[1] && item.ClassId == schedule.ClassId);
+                    if (checkSubject)
+                    {
+                        TimeSpan updateTimeStart;
+                        TimeSpan updateTimeEnd;
+
+                        if(TimeSpan.TryParse(element[3], out updateTimeStart) && TimeSpan.TryParse(element[4], out updateTimeEnd) && updateTimeStart <= updateTimeEnd)
+                        {
+                            schedule.SubjectId = element[2];
+                            schedule.TeacherId = element[1];
+                            schedule.TimeStart = updateTimeStart;
+                            schedule.TimeEnd = updateTimeEnd;
+                            dbContext.Update(schedule);
+                            dbContext.SaveChanges();
+                        }
+                        
+                    }
+                }
+            }
+
+        }
+        return View();
+    }
+
+//  --------------------------------------- Delete Schedule ---------------------------------------
+    [HttpPost]
+    public IActionResult DeleteTimeTable(string scheduleDelete)
+    {
+        using(var dbContext = new FbtContext())
+        {
+            var schedule = dbContext.Schedules.FirstOrDefault(item => item.ScheduleId == scheduleDelete);
+            if(schedule != null)
+            {
+                dbContext.Remove(schedule);
+                dbContext.SaveChanges();
+            }
+        }
+        return View();
+    }
+
+//// ====================================== Get Data Javascript ======================================
     public IActionResult GetSchoolYears()
     {
         using(var dbContext = new FbtContext())
@@ -520,6 +604,5 @@ public class AdminController : Controller
             return Json(dbContext.PersonInformations.Where(item => item.Id.StartsWith("HSE")).ToList());
         }
     }
-
 
 }

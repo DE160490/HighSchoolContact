@@ -161,7 +161,7 @@ const main = async () => {
     await fetchDataGetSubjectTeacher();
     await fetchDataGetSubjects();
     await fetchDataGetPersonInformation();
-
+    viewSchedule('SCHE000056', 'CSID000073', 'HSE0000003', 'Chemistry', '07:15:00', '08:00:00', 'Lớp 10A1', 'Nguyễn Văn Quyết', 'Hóa');
     //await console.log(Grades);
     //await console.log(Classes);
     /*await console.log(SubjectTeachers);*/
@@ -337,3 +337,276 @@ async function convertTimeFormat2(time) {
     }
     return convert;
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    async function closeForm() {
+        var classdiv = document.querySelector("div[class='view_timetable']");
+        var swap_formdiv = document.querySelector("div[name='swap_form']");
+        classdiv.removeChild(swap_formdiv);
+    }
+
+
+    async function setTeacherinput(name) {
+        var inputteacherName = document.querySelector("input[name='teacherNameEdit']");
+        inputteacherName.setAttribute("value", name);
+        inputteacherName.textContent = name;
+
+        var label = document.querySelector("label[name='labelSearchTeacher']");
+        var ul = document.querySelector("ul[name='searchTeacher']");
+
+        if (ul != null) {
+            label.removeChild(ul);
+        }
+    }
+
+    async function setTeacherli(value, name) {
+        var inputTeacherID = document.querySelector("input[name='teacherIDEdit']");
+        inputTeacherID.setAttribute("value", value);
+        setTeacherinput(name);
+    }
+
+    async function searchTeacher(classID) {
+        var label = document.querySelector("label[name='labelSearchTeacher']");
+        var ul = document.querySelector("ul[name='searchTeacher']");
+        if (ul != null) {
+            label.removeChild(ul);
+        }
+
+        const teacherName = document.querySelector("input[name='teacherNameEdit']").value;
+        const filteredPersons = PersonInformation.filter((person) => person.Fullname.startsWith(teacherName));
+
+        var newul = document.createElement('ul');
+        newul.setAttribute("name", "searchTeacher");
+
+        filteredPersons.forEach((person) => {
+            const filteredTeacher = TeachingSubject.filter((t) => t.TeacherID == person.ID && t.ClassID == classID);
+
+            filteredTeacher.forEach(e => {
+                var li = document.createElement('li');
+                li.setAttribute("value", e.TeacherID);
+                li.setAttribute("onclick", "setTeacherli('" + e.TeacherID + "','" + person.Fullname + "')");
+                li.textContent = person.Fullname;
+                newul.appendChild(li);
+            });
+
+        });
+        //   console.log(newul)
+        label.appendChild(newul);
+    }
+
+    async function setSubjectinput(name) {
+        var inputsubjectName = document.querySelector("input[name='subjectNameEdit']");
+        inputsubjectName.setAttribute("value", name);
+        inputsubjectName.textContent = name;
+
+        var label = document.querySelector("label[name='labelSearchSubject']");
+        var ul = document.querySelector("ul[name='searchSubject']");
+
+        if (ul != null) {
+            label.removeChild(ul);
+        }
+    }
+
+    async function setSubjectli(value, name) {
+        var inputSubjectID = document.querySelector("input[name='subjectIDEdit']");
+        inputSubjectID.setAttribute("value", value);
+        setSubjectinput(name);
+    }
+
+    async function searchSubject(classID) {
+        var label = document.querySelector("label[name='labelSearchSubject']");
+        var ul = document.querySelector("ul[name='searchSubject']");
+
+        if (ul != null) {
+            label.removeChild(ul);
+        }
+
+        const subjectName = document.querySelector("input[name='subjectNameEdit']").value;
+
+        const filteredSubject = Subject.filter((subject) => subject.SubjectName.startsWith(subjectName));
+
+        var newul = document.createElement('ul');
+        newul.setAttribute("name", "searchSubject");
+
+        filteredSubject.forEach((subject) => {
+            const filtered = TeachingSubject.filter((t) => t.SubjectID == subject.SubjectID && t.ClassID == classID);
+            filtered.forEach(e => {
+                var li = document.createElement('li');
+                li.setAttribute("value", e.SubjectID);
+                li.setAttribute("onclick", "setSubjectli('" + e.SubjectID + "','" + subject.SubjectName + "')");
+                li.textContent = subject.SubjectName;
+                newul.appendChild(li);
+            })
+        });
+
+        label.appendChild(newul);
+    }
+
+    async function viewSchedule(scheduleID, classID, teacherID, subjectID, timeStart, timeEnd, className, teacherName, subjectName) {
+
+        var classdiv = document.querySelector("div[class='view_timetable']");
+        var formgroup = document.createElement('div');
+        formgroup.setAttribute("name", "swap_form");
+        formgroup.setAttribute("class", "swap_form");
+
+        var form = document.createElement('form');
+        var close = document.createElement('div');
+        close.setAttribute("class", "close");
+        var buttonClose = document.createElement('button');
+        buttonClose.setAttribute("class", "btn_close");
+        buttonClose.setAttribute("type", "button");
+        buttonClose.setAttribute("onclick", "closeForm()");
+        var iconClose = document.createElement('i');
+        iconClose.setAttribute("class", "fa-regular fa-circle-xmark");
+        buttonClose.appendChild(iconClose);
+        close.appendChild(buttonClose);
+        form.appendChild(close);
+
+        //// Lớp Học
+        var labelinput_form1 = document.createElement('label');
+        labelinput_form1.setAttribute("class", "input_form");
+        var span1 = document.createElement('span');
+        span1.textContent = "Lớp học:";
+        labelinput_form1.appendChild(span1);
+        var input0_1 = document.createElement('input');
+        input0_1.setAttribute("type", "text");
+        input0_1.setAttribute("name", "classID");
+        input0_1.setAttribute("value", classID);
+        input0_1.setAttribute("hidden", "true");
+        labelinput_form1.appendChild(input0_1);
+        var input1 = document.createElement('input');
+        input1.setAttribute("type", "text");
+        input1.setAttribute("name", "className");
+        input1.setAttribute("value", className);
+        input1.setAttribute("placeholder", "Tên lớp học");
+        input1.setAttribute("readonly", "true");
+        labelinput_form1.appendChild(input1);
+
+        //// Môn Học
+        var labelinput_form2 = document.createElement('label');
+        labelinput_form2.setAttribute("class", "input_form");
+        labelinput_form2.setAttribute("name", "labelSearchSubject");
+        var span2 = document.createElement('span');
+        span2.textContent = "Môn học:";
+        labelinput_form2.appendChild(span2);
+        var input0_2 = document.createElement('input');
+        input0_2.setAttribute("type", "text");
+        input0_2.setAttribute("name", "subjectIDEdit");
+        input0_2.setAttribute("value", subjectID);
+        input0_2.setAttribute("hidden", "true");
+        labelinput_form2.appendChild(input0_2);
+        var input2 = document.createElement('input');
+        input2.setAttribute("type", "text");
+        input2.setAttribute("name", "subjectNameEdit");
+        input2.setAttribute("value", subjectName);
+        input2.setAttribute("oninput", "searchSubject('" + classID + "')");
+        input2.setAttribute("placeholder", "Tên môn học");
+        labelinput_form2.appendChild(input2);
+
+        //// Giáo Viên
+        var labelinput_form3 = document.createElement('label');
+        labelinput_form3.setAttribute("class", "input_form");
+        labelinput_form3.setAttribute("name", "labelSearchTeacher");
+        var span3 = document.createElement('span');
+        span3.textContent = "Giáo viên:";
+        labelinput_form3.appendChild(span3);
+        var input0_3 = document.createElement('input');
+        input0_3.setAttribute("type", "text");
+        input0_3.setAttribute("name", "teacherIDEdit");
+        input0_3.setAttribute("value", teacherID);
+        input0_3.setAttribute("hidden", "true");
+        labelinput_form3.appendChild(input0_3);
+        var input3 = document.createElement('input');
+        input3.setAttribute("type", "text");
+        input3.setAttribute("name", "teacherNameEdit");
+        input3.setAttribute("value", teacherName);
+        input3.setAttribute("oninput", "searchTeacher('" + classID + "')");
+        input3.setAttribute("placeholder", "Họ tên giáo viên");
+        labelinput_form3.appendChild(input3);
+
+        //// Thời Gian Bắt Đầu
+        var labelinput_form4 = document.createElement('label');
+        labelinput_form4.setAttribute("class", "input_form");
+        var span4 = document.createElement('span');
+        span4.textContent = "Thời gian bắt đầu:";
+        labelinput_form4.appendChild(span4);
+        var input4 = document.createElement('input');
+        input4.setAttribute("type", "time");
+        input4.setAttribute("name", "timeStart");
+        input4.setAttribute("value", timeStart);
+        labelinput_form4.appendChild(input4);
+
+        //// Thời Gian Kết Thúc
+        var labelinput_form5 = document.createElement('label');
+        labelinput_form5.setAttribute("class", "input_form");
+        var span5 = document.createElement('span');
+        span5.textContent = "Thời gian kết thúc:";
+        labelinput_form5.appendChild(span5);
+        var input5 = document.createElement('input');
+        input5.setAttribute("type", "time");
+        input5.setAttribute("name", "timeEnd");
+        input5.setAttribute("value", timeEnd);
+        labelinput_form5.appendChild(input5);
+
+        //// Button Edit với Delete
+        var btn_group = document.createElement('div');
+        btn_group.setAttribute("class", "btn_group");
+        var btn_edit = document.createElement('button');
+        btn_edit.setAttribute("class", "edit");
+        btn_edit.setAttribute("name", "edit");
+        btn_edit.setAttribute("type", "button");
+        btn_edit.setAttribute("onclick", "editSchedule('" + scheduleID + "')");
+        btn_edit.textContent = "Chỉnh sửa";
+        btn_group.appendChild(btn_edit);
+        var btn_delete = document.createElement('button');
+        btn_delete.setAttribute("class", "delete");
+        btn_delete.setAttribute("name", "delete");
+        btn_delete.setAttribute("type", "button");
+        btn_delete.setAttribute("onclick", "deleteSchedule('" + scheduleID + "')");
+        btn_delete.textContent = "Xóa";
+        btn_group.appendChild(btn_delete);
+
+        //// Add thẻ vào html
+        form.appendChild(labelinput_form1);
+        form.appendChild(labelinput_form2);
+        form.appendChild(labelinput_form3);
+        form.appendChild(labelinput_form4);
+        form.appendChild(labelinput_form5);
+        form.appendChild(btn_group);
+        formgroup.appendChild(form);
+        classdiv.appendChild(formgroup);
+    }
+
+    async function editSchedule(scheduleID) {
+        var teacherID = document.querySelector("input[name='teacherIDEdit']");
+        var subjectID = document.querySelector("input[name='subjectIDEdit']");
+        var timeStart = document.querySelector("input[name='timeStart']");
+        var timeEnd = document.querySelector("input[name='timeEnd']");
+
+        var schedule = scheduleID + "$" + teacherID.value + "$" + subjectID.value + "$" + timeStart.value + "$" + timeEnd.value;
+
+           var form = document.createElement("form");
+             var input = document.createElement("input");
+                 input.setAttribute("name", "scheduleEdit");
+                 input.setAttribute("value", schedule);
+
+             form.setAttribute("method", "post");
+             form.setAttribute("asp-controller", "Admin");
+             form.setAttribute("asp-action", "UpdateTimeTable");
+             form.appendChild(input);
+             form.submit();
+    }
+
+    async function deleteSchedule(scheduleID) {
+        var form = document.createElement("form");
+        form.setAttribute("method", "post");
+        form.setAttribute("asp-controller", "Admin");
+        form.setAttribute("asp-action", "DeleteTimeTable");
+            var input = document.createElement("input");
+                input.setAttribute("name", "scheduleDelete");
+                input.setAttribute("value", scheduleID);
+        form.appendChild(input);
+        form.submit();
+    }

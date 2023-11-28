@@ -1,10 +1,11 @@
 ﻿using FBT.Models;
+using System.Xml.Linq;
 
 namespace FBT.Reponsitory
 {
     public class Handle
     {
-        private  static string CreateScheduleID()
+        public static string CreateScheduleID()
         {
             try {
                 using(var contextdb = new FbtContext())
@@ -103,11 +104,12 @@ namespace FBT.Reponsitory
             List<Schedule> list = new List<Schedule>();
 
             string[] scheduleinput = inputString.Split("$@");
-
+            scheduleinput = scheduleinput.Take(scheduleinput.Length - 1).ToArray();
             foreach (string schedule in scheduleinput)
             {
                 Schedule scheduleinsert = new Schedule();
-                scheduleinsert.ScheduleId = CreateScheduleID();
+                //scheduleinsert.ScheduleId = CreateScheduleID();
+                scheduleinsert.ScheduleId = " ";
                 string[] element = schedule.Split(", ");
                 foreach (var item in element)
                 {

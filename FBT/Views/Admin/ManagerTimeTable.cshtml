@@ -60,7 +60,7 @@
                         @foreach (var weekstart in Model.Select(item => item.WeekBegins.Value.ToString("dd/MM/yyyy")).Distinct())
                         {
                             @foreach (var weekend in Model.Where(item => item.WeekBegins.Value.ToString("dd/MM/yyyy") == weekstart).Select(item => item.WeekEnds.Value.ToString("dd/MM/yyyy")).Distinct())
-                            {    
+                            {
                                 <p>@weekstart - @weekend</p>
                             }
                         }
@@ -86,37 +86,39 @@
                         
                         @foreach (var time in Model.Where(item => item.Lecture == lecture).Select(item => item.TimeStart).Distinct())
                         {
-
-                            var rowspan = Model.Where(item => item.Lecture == lecture).Select(item => item.TimeStart).Distinct().GroupBy(item => item).Count();
-                            
-                            <tr>
-                                @if(count == 0)
-                                {
-                                    <td rowspan="@rowspan">@lecture </td>
-                                    count++;
-                                }
-                                <td>@time </td>
+                            @foreach (var times in Model.Where(item => item.Lecture == lecture && item.TimeStart == time).Select(item => item.TimeEnd).Distinct())
+                            {
+                                var rowspan = Model.Where(item => item.Lecture == lecture).Select(item => item.TimeStart).Distinct().GroupBy(item => item).Count();
+                                <tr>
+                                    @if(count == 0)
+                                    {
+                                        <td rowspan="@rowspan">@lecture </td>
+                                        count++;
+                                    }
+                                    <td>@time - @times </td>
                 
-                                @foreach(var days in dayofweekFormat)
-                                {
-                                    var check = false;
-                                    @foreach(var subject in Model.Where(item => item.TimeStart == time && item.DayOfWeek.Value.DayOfWeek.ToString() == days)){
-                                        if(subject.SubjectId != null)
-                                        {
-                                            <td>
-                                                @subject.Subject?.SubjectName
-                                                <p class="teacher" style="margin: 8px 0 0 0; padding: 0; font-size: 9px; color: red;">@subject.Teacher?.TeacherNavigation.Fullname</p>
-                                            </td>
+                                    @foreach(var days in dayofweekFormat)
+                                    {
+                                        var check = false;
+                                        @foreach(var subject in Model.Where(item => item.TimeStart == time && item.DayOfWeek.Value.DayOfWeek.ToString() == days)){
+                                            if(subject.SubjectId != null)
+                                            {
+                                                //scheduleID, classID, teacherID, subjectID, timeStart, timeEnd, className, teacherName, subjectName
+                                                <td ondblclick="viewSchedule('@subject.ScheduleId', '@subject.ClassId', '@subject.TeacherId', '@subject.SubjectId', '@subject.TimeStart', '@subject.TimeEnd', '@subject.Class.ClassName', '@subject.Teacher.TeacherNavigation.Fullname', '@subject.Subject.SubjectName')">
+                                                    @subject.Subject?.SubjectName
+                                                    <p class="teacher" style="margin: 8px 0 0 0; padding: 0; font-size: 9px; color: red;">@subject.Teacher?.TeacherNavigation.Fullname</p>
+                                                </td>
                                             
-                                            check = true;
+                                                check = true;
+                                            }
+                                        }
+                                        if (!check)
+                                        {
+                                            <td></td>
                                         }
                                     }
-                                    if (!check)
-                                    {
-                                        <td></td>
-                                    }
-                                }
-                            </tr>
+                                </tr>
+                            }
                         }
 
                     }
