@@ -1,0 +1,48 @@
+﻿@model FBT.Models.Class
+
+@{
+    ViewData["Title"] = "ViewClassDetail";
+    Layout = "~/Views/Shared/_LayoutTeacher.cshtml";
+}
+
+<div>
+    
+    <h2 style="text-align: center; margin: 20px 0;">Chi tiết lớp học</h2>
+
+    <div>
+        <strong>Class ID:</strong> @Model.ClassId
+    </div>
+    <div>
+        <strong>Class Name:</strong> @Model.ClassName
+    </div>
+    <div>
+        <strong>Number of Students:</strong> @(Model.Students?.Count ?? 0)
+    </div>
+
+    <a asp-action="ViewSubjectClasses" class="btn btn-primary">Quay lại danh sách lớp</a>
+    <a asp-controller="Teacher" asp-action="ViewScores" asp-route-classId="@Model.ClassId"> bảng điểm lớp</a>
+    <h3>Danh sách học sinh:</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Student ID</th>
+                <th>Student Name</th>
+                <th>            </th>
+                <!-- Thêm các cột thông tin khác của học sinh nếu cần -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in Model.Students)
+            {
+                <tr>
+                    <td>@student.StudentId</td>
+                    <td>@student.StudentNavigation.Fullname</td>
+                    <td>
+                        <a asp-controller="Teacher" asp-action="AddScore" asp-route-studentId="@student.StudentId" class="btn btn-primary">chấm điểm </a>
+                    </td>
+                    <!-- Hiển thị thông tin khác của học sinh nếu cần -->
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

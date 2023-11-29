@@ -1,0 +1,144 @@
+﻿@model Tuple<List<FBT.Models.Score>, List<FBT.Models.Score>>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+@{
+    ViewData["Title"] = "ViewScores";
+    Layout = "~/Views/Shared/_LayoutTeacher.cshtml";
+}
+<div>
+    <h2>Danh sách lớp mà bạn đang dạy môn @ViewBag.SubjectName</h2>
+    <h2>Lớp: @ViewBag.ClassName </h2>
+    <h2>Môn học: @ViewBag.SubjectName</h2>
+    <a asp-controller="Teacher" asp-action="ViewClassDetail" asp-route-classId="@ViewBag.ClassId">danh sách lớp  </a>
+    <!-- Phần hiển thị thông báo -->
+    @if (ViewData["Success"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @ViewData["Success"]
+        </div>
+    }
+
+    @if (ViewData["ErrorScore"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewData["ErrorScore"]
+        </div>
+    }
+</div>
+
+<div id="semester1Table">
+    <h2 style="text-align: center; margin: 20px 0;">Bảng điểm học kỳ 1</h2>
+   
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Mã Học Sinh</th>
+                <th>Name</th>
+                <th>Hệ Số 1</th>
+                <th>Hệ Số 2</th>
+                <th>Hệ Số 3</th>
+                <th>       </th>
+                <th>       </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var score1 in Model.Item1)
+            {
+                if (score1 != null && score1.Student != null && score1.Semester == 1)
+                {
+                    <tr>
+                        <td>@score1.Student.StudentId</td>
+                        <td>@score1.Student.StudentNavigation.Fullname</td>
+                        <td>@(score1.Coefficient1.HasValue ? score1.Coefficient1.ToString() : "N/A")</td>
+                        <td>@(score1.Coefficient2.HasValue ? score1.Coefficient2.ToString() : "N/A")</td>
+                        <td>@(score1.Coefficient3.HasValue ? score1.Coefficient3.ToString() : "N/A")</td>
+                        <td>
+                            <a href="@Url.Action("UpdateScore", new { studentId = score1.Student.StudentId, subjectId = score1.SubjectId, semester = score1.Semester })">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="javascript:void(0);" onclick="confirmDelete('@Url.Action("DeleteScore", new { studentId = score1.Student.StudentId, semester = score1.Semester })')">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <a class="btn btn-outline-info" id="semester2Link">Học kỳ 2</a>
+</div>
+
+<div id="semester2Table">
+    <h2 style="text-align: center; margin: 20px 0;">Bảng điểm học kỳ 2</h2>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Mã Học Sinh</th>
+                <th>Name</th>
+                <th> Hệ Số 1 </th>
+                <th> Hệ Số 2 </th>
+                <th> Hệ Số 3 </th>
+                <th>         </th>
+                <th>         </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var score2 in Model.Item2)
+            {
+                if (score2 != null && score2.Student != null && score2.Semester == 2)
+                {
+                    <tr>
+                        <td>@score2.Student.StudentId</td>
+                        <td>@score2.Student.StudentNavigation.Fullname</td>
+                        <td>@(score2.Coefficient1.HasValue ? score2.Coefficient1.ToString() : "N/A")</td>
+                        <td>@(score2.Coefficient2.HasValue ? score2.Coefficient2.ToString() : "N/A")</td>
+                        <td>@(score2.Coefficient3.HasValue ? score2.Coefficient3.ToString() : "N/A")</td>
+                        <td>
+                            <a href="@Url.Action("UpdateScore", new { studentId = score2.Student.StudentId, subjectId = score2.SubjectId, semester = score2.Semester })">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                        <td>
+                            <a href="javascript:void(0);" onclick="confirmDelete('@Url.Action("DeleteScore", new { studentId = score2.Student.StudentId, semester = score2.Semester })')">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+    <a class="btn btn-outline-info" id="semester1Link">Học kỳ 1</a>
+</div>
+
+<a asp-action="ViewSubjectClasses" class="btn btn-primary"> Quay lại </a>
+
+<script>
+    // Ẩn tất cả các bảng điểm khi trang được tải lên
+    $(document).ready(function () {
+        $("#semester1Table").show();
+        $("#semester2Table").hide();
+    });
+
+    // Bắt sự kiện khi click vào "Học kỳ 1"
+    $("#semester1Link").click(function () {
+        $("#semester1Table").show();
+        $("#semester2Table").hide();
+    });
+
+    // Bắt sự kiện khi click vào "Học kỳ 2"
+    $("#semester2Link").click(function () {
+        $("#semester1Table").hide();
+        $("#semester2Table").show();
+    });
+
+    function confirmDelete(url) {
+        if (confirm("Bạn có chắc chắn muốn xóa điểm này không?")) {
+            window.location.href = url;
+        }
+    }
+</script>
+

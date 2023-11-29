@@ -1,0 +1,39 @@
+﻿@model List<FBT.Models.Class>
+
+@{
+    ViewData["Title"] = "ViewSubjectClasses";
+    Layout = "~/Views/Shared/_LayoutTeacher.cshtml";
+}
+
+<div>
+    <h2 style="text-align: center; margin: 20px 0;">Danh sách lớp mà bạn đang dạy môn @ViewBag.SubjectName</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Class ID</th>
+                <th>Class Name</th>
+                <th>Number of Students</th>
+                <th></th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var schoolClass in Model)
+            {
+                <tr>
+                    <td>@schoolClass.ClassId</td>
+                    <td>@schoolClass.ClassName</td>
+                    <td>@(schoolClass.Students?.Count ?? 0)</td>
+                    <td>
+                        <a asp-controller="Teacher" asp-action="ViewClassDetail" asp-route-classId="@schoolClass.ClassId" >danh sách lớp  </a>
+                    </td>
+                    <td>
+                        <a asp-controller="Teacher" asp-action="ViewScores" asp-route-classId="@schoolClass.ClassId"> bảng điểm lớp</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
