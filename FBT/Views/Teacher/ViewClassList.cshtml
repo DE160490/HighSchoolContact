@@ -1,0 +1,67 @@
+﻿@model FBT.Models.Class
+
+@{
+    ViewData["Title"] = "ViewClassList";
+    Layout = "~/Views/Shared/_LayoutTeacher.cshtml";
+}
+
+<h1>Lớp do bạn chủ nhiệm </h1>
+
+<p>Class ID: @Model?.ClassId</p>
+<p>Class Name: @Model?.ClassName</p>
+<p>Number of Students: @Model?.Students?.Count</p>
+
+<h2>Teacher Information</h2>
+<p>Teacher ID: @Model?.Teachers?.FirstOrDefault()?.TeacherId</p>
+<p>Teacher Name: @Model?.Teachers?.FirstOrDefault()?.TeacherNavigation?.Fullname</p>
+
+<a asp-controller="Teacher" asp-action="AddStudent" asp-route-classId="@Model?.ClassId" class="btn btn-primary">Them hoc sinh </a>
+
+<h2>Student List</h2>
+@if (Model != null && Model.Students != null && Model.Students.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Mã học sinh</th>
+                <th>Họ và tên </th>
+                <th>Giới tính</th>
+                <th>DOB</th>
+                <th>Nơi ở</th>
+                <th>Action</th> <!-- Thêm cột cho nút xóa -->
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in Model.Students)
+            {
+                <tr>
+                    <td>@student.StudentId</td>
+                    <td>@student.StudentNavigation.Fullname</td>
+                    <td>@student.StudentNavigation.Gender</td>
+                    <td>@student.StudentNavigation.Dob</td>
+                    <td>@student.StudentNavigation.PlaceOfResidence</td>
+                    <td>
+                        <a href="#" onclick="confirmDelete('@Url.Action("DeleteStudent", new { teacherId = ViewBag.TeacherId, studentId = student.StudentId, classId = ViewBag.ClassId })')">
+                            xóa
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>No students available.</p>
+}
+
+<script>
+    function confirmDelete(url) {
+        if (confirm("Bạn có chắc chắn muốn xóa học sinh này khỏi lớp không?")) {
+            window.location.href = url;
+        }
+    }
+</script>
+
+
+
