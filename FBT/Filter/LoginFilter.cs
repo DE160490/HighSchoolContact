@@ -13,23 +13,18 @@ namespace FBT.Filter
         {
             var controllerName = context.Controller.GetType().Name;
 
-            //var controllerNameNow = context.RouteData.Values["controller"];
-            //var actionNameNow = context.RouteData.Values["action"];
-            //Console.WriteLine(controllerNameNow + " " +actionNameNow);
-
             var Username = context.HttpContext.Session.GetString("Username");
             if(Username == null && controllerName != "LoginController")
             {
                 context.Result = new RedirectResult("/Login");
             }else if(Username != null && controllerName != "LoginController")
             {
-                //Console.WriteLine(controllerName);
                 if (controllerName != "LogoutController")
                 {
                     var role = Username.Split('$')[2];
                     if ((role == "0" && controllerName != "StudentController")
-                        || (role == "1" && controllerName != "ParentController")
-                        || (role == "2" && controllerName != "TeacherController")
+                        || (role == "2" && controllerName != "ParentController")
+                        || (role == "1" && controllerName != "TeacherController")
                         || (role == "3" && controllerName != "AdminController"))
                     {
                         context.Result = new RedirectResult("/Login");
