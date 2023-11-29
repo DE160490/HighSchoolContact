@@ -472,6 +472,7 @@ public class AdminController : Controller
     [HttpPost]
     public IActionResult CreateTimeTable(string obj)
     {
+        Console.WriteLine("Hello: Tester with " + obj);
         List<Schedule> schedules = new List<Schedule>();
         schedules = Handle.SplitScheduleInput(obj);
         schedules.ForEach(schedule =>
@@ -544,7 +545,7 @@ public class AdminController : Controller
 //  --------------------------------------- Delete Schedule ---------------------------------------
     [HttpPost]
     public IActionResult DeleteTimeTable(string scheduleDelete)
-    {
+    { 
         using(var dbContext = new FbtContext())
         {
             Console.WriteLine("Hello Here: " + scheduleDelete);

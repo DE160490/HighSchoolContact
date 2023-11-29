@@ -161,6 +161,7 @@ const main = async () => {
     await fetchDataGetSubjectTeacher();
     await fetchDataGetSubjects();
     await fetchDataGetPersonInformation();
+
     //viewSchedule('SCHE000056', 'CSID000073', 'HSE0000003', 'Chemistry', '07:15:00', '08:00:00', 'Lớp 10A1', 'Nguyễn Văn Quyết', 'Hóa');
     //await console.log(Grades);
     //await console.log(Classes);
@@ -413,7 +414,7 @@ async function convertTimeFormat2(time) {
         var inputSubjectID = document.querySelector("input[name='subjectIDEdit']");
         inputSubjectID.setAttribute("value", value);
         setSubjectinput(name);
-    }
+    };
 
     async function searchSubject(classID) {
         var label = document.querySelector("label[name='labelSearchSubject']");
@@ -442,7 +443,7 @@ async function convertTimeFormat2(time) {
         });
 
         label.appendChild(newul);
-    }
+};
 
     async function viewSchedule(scheduleID, classID, teacherID, subjectID, timeStart, timeEnd, className, teacherName, subjectName) {
 
@@ -556,14 +557,14 @@ async function convertTimeFormat2(time) {
         var btn_edit = document.createElement('button');
         btn_edit.setAttribute("class", "edit");
         btn_edit.setAttribute("name", "edit");
-        btn_edit.setAttribute("type", "submit");
+        btn_edit.setAttribute("type", "button");
         btn_edit.setAttribute("onclick", "editSchedule('" + scheduleID + "')");
         btn_edit.textContent = "Chỉnh sửa";
         btn_group.appendChild(btn_edit);
         var btn_delete = document.createElement('button');
         btn_delete.setAttribute("class", "delete");
         btn_delete.setAttribute("name", "delete");
-        btn_delete.setAttribute("type", "submit");
+        btn_delete.setAttribute("type", "button");
         btn_delete.setAttribute("onclick", "deleteSchedule('" + scheduleID + "')");
         btn_delete.textContent = "Xóa";
         btn_group.appendChild(btn_delete);
@@ -577,41 +578,67 @@ async function convertTimeFormat2(time) {
         form.appendChild(btn_group);
         formgroup.appendChild(form);
         classdiv.appendChild(formgroup);
-    }
+};
 
-    async function editSchedule(scheduleID) {
-        var teacherID = document.querySelector("input[name='teacherIDEdit']");
-        var subjectID = document.querySelector("input[name='subjectIDEdit']");
-        var timeStart = document.querySelector("input[name='timeStart']");
-        var timeEnd = document.querySelector("input[name='timeEnd']");
+async function editSchedule(scheduleID) {
+    console.log("Update Schedule JS");
+    var teacherID = document.querySelector("input[name='teacherIDEdit']");
+    var subjectID = document.querySelector("input[name='subjectIDEdit']");
+    var timeStart = document.querySelector("input[name='timeStart']");
+    var timeEnd = document.querySelector("input[name='timeEnd']");
 
-        var schedule = scheduleID + "$" + teacherID.value + "$" + subjectID.value + "$" + timeStart.value + "$" + timeEnd.value;
+    var schedule = scheduleID + "$" + teacherID.value + "$" + subjectID.value + "$" + timeStart.value + "$" + timeEnd.value;
 
-           var form = document.createElement("form");
-             var input = document.createElement("input");
-                 input.setAttribute("name", "scheduleEdit");
-                 input.setAttribute("value", schedule);
+    var form = document.createElement("form");
 
-             form.setAttribute("method", "post");
-             form.setAttribute("asp-controller", "Admin");
-             form.setAttribute("asp-action", "UpdateTimeTable");
-             form.appendChild(input);
-        var classdiv = document.querySelector("div[class='view_timetable']");
-        classdiv.appendChild(form);
-             //form.submit();
-    }
+    var input = document.createElement("input");
+    input.setAttribute("name", "scheduleEdit");
+    input.setAttribute("value", schedule);
+
+    form.setAttribute("method", "post");
+    form.setAttribute("asp-controller", "Admin");
+    form.setAttribute("asp-action", "UpdateTimeTable");
+    form.appendChild(input);
+
+    document.querySelector("div[class='view_timetable']").appendChild(form);
+        
+    form.submit();
+};
+
 
 async function deleteSchedule(scheduleID) {
-        console.log("Delete Schedule JS");
-        var form = document.createElement("form");
-        form.setAttribute("method", "post");
-        form.setAttribute("asp-controller", "Admin");
-        form.setAttribute("asp-action", "DeleteTimeTable");
-            var input = document.createElement("input");
-                input.setAttribute("name", "scheduleDelete");
-                input.setAttribute("value", scheduleID);
-        form.appendChild(input);
-    var classdiv = document.querySelector("div[class='view_timetable']");
-    classdiv.appendChild(form);
-        //form.submit();
-    }
+    console.log("Delete Schedule JS");
+    var form = document.createElement("form");
+    form.setAttribute("method", "post");
+    form.setAttribute("asp-controller", "Admin");
+    form.setAttribute("asp-action", "DeleteTimeTable");
+
+    var input = document.createElement("input");
+    input.setAttribute("name", "scheduleDelete");
+    input.setAttribute("value", scheduleID);
+
+    form.appendChild(input);
+
+    document.querySelector("div[class='view_timetable']").appendChild(form);
+
+    form.submit();
+};
+
+
+
+//async function createformSubmit(scheduleID) {
+//    var form = document.createElement("form");
+//    form.setAttribute("method", "post");
+//    form.setAttribute("asp-controller", "Admin");
+//    form.setAttribute("asp-action", "DeleteTimeTable");
+
+//    var input = document.createElement("input");
+//    input.setAttribute("name", "scheduleDelete");
+//    input.setAttribute("value", scheduleID);
+
+//    form.appendChild(input);
+
+//    document.querySelector("div[class='view_timetable']").appendChild(form);
+//    return form;
+//};
+
