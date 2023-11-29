@@ -161,7 +161,7 @@ const main = async () => {
     await fetchDataGetSubjectTeacher();
     await fetchDataGetSubjects();
     await fetchDataGetPersonInformation();
-    viewSchedule('SCHE000056', 'CSID000073', 'HSE0000003', 'Chemistry', '07:15:00', '08:00:00', 'Lớp 10A1', 'Nguyễn Văn Quyết', 'Hóa');
+    //viewSchedule('SCHE000056', 'CSID000073', 'HSE0000003', 'Chemistry', '07:15:00', '08:00:00', 'Lớp 10A1', 'Nguyễn Văn Quyết', 'Hóa');
     //await console.log(Grades);
     //await console.log(Classes);
     /*await console.log(SubjectTeachers);*/
@@ -375,13 +375,13 @@ async function convertTimeFormat2(time) {
         }
 
         const teacherName = document.querySelector("input[name='teacherNameEdit']").value;
-        const filteredPersons = PersonInformation.filter((person) => person.Fullname.startsWith(teacherName));
+        const filteredPersons = PersonInformations.filter((person) => person.Fullname.startsWith(teacherName));
 
         var newul = document.createElement('ul');
         newul.setAttribute("name", "searchTeacher");
 
         filteredPersons.forEach((person) => {
-            const filteredTeacher = TeachingSubject.filter((t) => t.TeacherID == person.ID && t.ClassID == classID);
+            const filteredTeacher = SubjectTeachers.filter((t) => t.TeacherID == person.ID && t.ClassID == classID);
 
             filteredTeacher.forEach(e => {
                 var li = document.createElement('li');
@@ -425,13 +425,13 @@ async function convertTimeFormat2(time) {
 
         const subjectName = document.querySelector("input[name='subjectNameEdit']").value;
 
-        const filteredSubject = Subject.filter((subject) => subject.SubjectName.startsWith(subjectName));
+        const filteredSubject = Subjects.filter((subject) => subject.SubjectName.startsWith(subjectName));
 
         var newul = document.createElement('ul');
         newul.setAttribute("name", "searchSubject");
 
         filteredSubject.forEach((subject) => {
-            const filtered = TeachingSubject.filter((t) => t.SubjectID == subject.SubjectID && t.ClassID == classID);
+            const filtered = SubjectTeachers.filter((t) => t.SubjectID == subject.SubjectID && t.ClassID == classID);
             filtered.forEach(e => {
                 var li = document.createElement('li');
                 li.setAttribute("value", e.SubjectID);
@@ -551,19 +551,19 @@ async function convertTimeFormat2(time) {
         labelinput_form5.appendChild(input5);
 
         //// Button Edit với Delete
-        var btn_group = document.createElement('div');
+        var btn_group = document.createElement('div');  
         btn_group.setAttribute("class", "btn_group");
         var btn_edit = document.createElement('button');
         btn_edit.setAttribute("class", "edit");
         btn_edit.setAttribute("name", "edit");
-        btn_edit.setAttribute("type", "button");
+        btn_edit.setAttribute("type", "submit");
         btn_edit.setAttribute("onclick", "editSchedule('" + scheduleID + "')");
         btn_edit.textContent = "Chỉnh sửa";
         btn_group.appendChild(btn_edit);
         var btn_delete = document.createElement('button');
         btn_delete.setAttribute("class", "delete");
         btn_delete.setAttribute("name", "delete");
-        btn_delete.setAttribute("type", "button");
+        btn_delete.setAttribute("type", "submit");
         btn_delete.setAttribute("onclick", "deleteSchedule('" + scheduleID + "')");
         btn_delete.textContent = "Xóa";
         btn_group.appendChild(btn_delete);
@@ -596,10 +596,13 @@ async function convertTimeFormat2(time) {
              form.setAttribute("asp-controller", "Admin");
              form.setAttribute("asp-action", "UpdateTimeTable");
              form.appendChild(input);
-             form.submit();
+        var classdiv = document.querySelector("div[class='view_timetable']");
+        classdiv.appendChild(form);
+             //form.submit();
     }
 
-    async function deleteSchedule(scheduleID) {
+async function deleteSchedule(scheduleID) {
+        console.log("Delete Schedule JS");
         var form = document.createElement("form");
         form.setAttribute("method", "post");
         form.setAttribute("asp-controller", "Admin");
@@ -608,5 +611,7 @@ async function convertTimeFormat2(time) {
                 input.setAttribute("name", "scheduleDelete");
                 input.setAttribute("value", scheduleID);
         form.appendChild(input);
-        form.submit();
+    var classdiv = document.querySelector("div[class='view_timetable']");
+    classdiv.appendChild(form);
+        //form.submit();
     }

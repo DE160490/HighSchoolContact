@@ -506,10 +506,12 @@ public class AdminController : Controller
     [HttpPost]
     public IActionResult UpdateTimeTable(string scheduleEdit)
     {
+        Console.WriteLine("Hello in UpdateTimeTable: " + scheduleEdit);
         string[] element = scheduleEdit.Split('$');
         if(element.Length > 0)
         {
-            using(var dbContext = new FbtContext())
+            Console.WriteLine("Hello 2 in UpdateTimeTable : " + scheduleEdit);
+            using (var dbContext = new FbtContext())
             {
                 var schedule = dbContext.Schedules.FirstOrDefault(item => item.ScheduleId == element[0]);
                 if (schedule != null)
@@ -535,7 +537,7 @@ public class AdminController : Controller
                 }
             }
 
-        }
+        }   
         return View();
     }
 
@@ -545,9 +547,11 @@ public class AdminController : Controller
     {
         using(var dbContext = new FbtContext())
         {
+            Console.WriteLine("Hello Here: " + scheduleDelete);
             var schedule = dbContext.Schedules.FirstOrDefault(item => item.ScheduleId == scheduleDelete);
             if(schedule != null)
             {
+                Console.WriteLine("Hello 2");
                 dbContext.Remove(schedule);
                 dbContext.SaveChanges();
             }
