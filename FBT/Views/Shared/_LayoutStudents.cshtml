@@ -36,28 +36,27 @@
         <div class="navbar_menus">
             <a class="logo" href="#"><img src="~/img/Shared/Logo_ High School Contact.png" alt="Logo" srcset=""></a>
             <div class="menus">
-                <ul>
-                    <li>
-                        <a class="menu1" asp-controller="Student" asp-action="Index" asp-route-id="@studentID">
-                            <i class="fa-solid fa-house"></i> Thống kê tổng quan
-                        </a>
-                    </li>
-                    <li>
-                        <a class="menu1" asp-controller="Student" asp-action="TimeTable" asp-route-id="@studentID">
-                            <i class="fa-solid fa-calendar-days"></i> Thời khóa biểu
-                        </a>
-                    </li>
-                    <li>
-                        <a class="menu1" asp-controller="Student" asp-action="StudentScore" asp-route-id="@studentID">
-                            <i class="fa-solid fa-book-open"></i> Bảng điểm
-                        </a>
-                    </li>
-                    <li>
-                        <a class="menu1" asp-controller="Student" asp-action="StudentScore" asp-route-id="@studentID">
-                            <i class="fa-solid fa-book-open"></i> Học bạ
-                        </a>
-                    </li>
-                </ul>
+                <div class="menu">
+                    <a class="menu1" asp-controller="Student" asp-action="Index" asp-route-id="@studentID">
+                        <i class="fa-solid fa-house"></i> Thống kê tổng quan
+                        
+                    </a>
+                </div>
+                <div class="menu">
+                    <a class="menu1" asp-controller="Student" asp-action="TimeTable" asp-route-id="@studentID">
+                        <i class="fa-solid fa-calendar-days"></i> Thời khóa biểu
+                    </a>
+                </div>
+                <div class="menu">
+                    <a class="menu1" asp-controller="Student" asp-action="StudentScore" asp-route-id="@studentID">
+                        <i class="fa-solid fa-book-open"></i> Bảng điểm
+                    </a>
+                </div>
+                <div class="menu">
+                    <a class="menu1" asp-controller="Student" asp-action="Transcript" asp-route-id="@studentID">
+                        <i class="fa-solid fa-book-open"></i> Học bạ
+                    </a>
+                </div>
             </div>
         </div>
         <div class="content">

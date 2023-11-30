@@ -1,0 +1,280 @@
+﻿@model List<FBT.Models.SchoolProfile>
+
+
+@{
+    ViewData["Title"] = "Transcript";
+    Layout = "~/Views/Shared/_LayoutStudents.cshtml";
+}
+
+@if (ViewBag.Transcript != null)
+{
+    <h3 style="font-family: 'Roboto';
+               padding-top: 30px;
+               padding-left: 20px;">
+        Kết quả học tập của @ViewBag.StudentName
+    </h3>
+    <h4 style="text-align: center;
+                           font-family: 'Roboto', 'SemiBold';
+                           font-size: 24px;
+                           padding-top: 10px;
+                           padding-bottom: 10px;">Học bạ tổng kết điểm cuối năm
+    </h4>
+    <table style="text-align: center;
+                  border-collapse: collapse; margin-left: 30px;">
+        <thead style="background-color: #EEEEEE;
+                      height: 30px;">
+            <tr>
+                <th style="width: 200px;
+                           border: 1px solid rgb(178, 178, 178);
+                           padding: 8px;">Môn học</th>
+                <th style="width: 150px;
+                           border: 1px solid rgb(178, 178, 178);
+                           padding: 8px;">HK1</th>
+                <th style="width: 150px;
+                           border: 1px solid rgb(178, 178, 178);
+                           padding: 8px;">HK2</th>
+                <th style="width: 150px;
+                           border: 1px solid rgb(178, 178, 178);
+                           padding: 8px;">Cuối năm</th>
+                <th style="width: 230px;
+                           border: 1px solid rgb(178, 178, 178);
+                           padding: 8px;">Nhận xét</th>
+                <th style="width: 160px;
+                           border: 1px solid rgb(178, 178, 178);
+                           padding: 8px;">Xác nhận</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var totalSemester1Scores = 0;
+                var totalSemester2Scores = 0;
+                var totalFinalScores = 0;
+            }
+            @foreach (var record in ViewBag.Transcript)
+            {
+                <tr>
+                    <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">
+                        @record.SubjectName
+                    </td>
+                    @{
+                        totalSemester1Scores += record.Semester1Scores;
+                        totalSemester2Scores += record.Semester2Scores;
+                        
+                    }
+                    <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">
+                    @record.Semester1Scores
+                    </td>
+                    <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">
+                    @record.Semester2Scores
+                    </td>
+                    @{
+                        var totalScores = (record.Semester1Scores + record.Semester2Scores * 2) / 3;
+                        var FinalScores = Math.Round(totalScores, 1);
+                    }
+                    <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">
+                        @FinalScores
+                    </td>
+                    @{
+                        totalFinalScores += @FinalScores;
+                    }
+                    @if (@record.Note != null)
+                    {
+                     <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">
+                    @record.Note
+                        </td>
+                    }
+                    else
+                    {
+                        <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">
+                            -
+                        </td>
+                    }
+                    
+                    <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">
+                    @record.ConfirmationsOfSubjectTeacher
+                    </td>
+                   
+                    </tr>
+                
+            }
+           
+            <tr>
+                <td style="background-color: #86d2fe85;
+                           border: 0.5px solid rgb(100, 100, 100);
+                           padding: 5px;">
+                    Điểm TB
+                </td>
+                @{
+                    var CountScores = (int)ViewBag.CountScores;
+                    var semester1final = Math.Round((double)totalSemester1Scores / CountScores, 1);
+                    var semester2final = Math.Round((double)totalSemester2Scores / CountScores, 1);
+                    var Final = Math.Round((double)totalFinalScores / CountScores, 1);
+                }
+               
+                    <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">
+                    @semester1final
+                    </td>
+                    <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">
+                    @semester2final
+                    </td>
+
+                    <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">
+                    @Final
+                </td>
+                <td style="background-color: #86d2fe85;"></td>
+                <td style="background-color: #86d2fe85;"></td>
+            </tr>
+            @foreach (var record2 in ViewBag.transcript2)
+            {
+            <tr>
+                <td style="background-color: #F8F8F8;
+                           border: 0.5px solid rgb(100, 100, 100);
+                           padding: 5px;">
+                    Học lực
+                </td>
+                    <td style="background-color: #F8F8F8;
+                                  border: 0.5px solid rgb(212, 212, 212);
+                                  padding: 5px;">@record2.Level</td>
+                    <td style="background-color: #F8F8F8;
+                                  border: 0.5px solid rgb(212, 212, 212);
+                                  padding: 5px;">@record2.Level</td>
+                    <td style="background-color: #F8F8F8;
+                                  border: 0.5px solid rgb(212, 212, 212);
+                                  padding: 5px;">@record2.Level</td>
+                    @if (@record2.Comment != null)
+                    {
+                        <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">
+                            @record2.Comment
+                        </td>
+                    }
+                    else
+                    {
+                        <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">
+                            -
+                        </td>
+                    }
+                    @if (@record2.ConfirmationsOfPrincipal != null)
+                    {
+                        <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">
+                            @record2.ConfirmationsOfPrincipal
+                        </td>
+                    }
+                    else
+                    {
+                        <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">
+                            -
+                        </td>
+                    }
+            </tr>
+            <tr>
+                <td style="background-color: #F8F8F8;
+                           border: 0.5px solid rgb(100, 100, 100);
+                           padding: 5px;">
+                    Hạnh kiểm
+                </td>
+                    <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">@record2.AbilitiesAndQualities</td>
+                    <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">@record2.AbilitiesAndQualities</td>
+                    <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">@record2.AbilitiesAndQualities</td>
+                    @if (@record2.Comment != null)
+                    {
+                        <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">
+                            @record2.Comment
+                        </td>
+                    }
+                    else
+                    {
+                        <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">
+                            -
+                        </td>
+                    }
+                    @if (@record2.ConfirmationsOfHomeroomTeacher != null)
+                    {
+                        <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">
+                            @record2.ConfirmationsOfHomeroomTeacher
+                        </td>
+                    }
+                    else
+                    {
+                        <td style="background-color: #F8F8F8;
+                                 border: 0.5px solid rgb(212, 212, 212);
+                                 padding: 5px;">
+                            -
+                        </td>
+                    }
+            </tr>
+            }
+        </tbody>
+    </table>
+    @foreach (var record2 in ViewBag.transcript2)
+    {
+        <style>
+            .container {
+                display: flex;
+                text-align: center;
+                padding-left: 100px;
+                padding-top: 30px;
+                padding-bottom: 30px;
+            }
+
+                .container h5 {
+                    margin-right: 25%;
+                    text-align: center;
+                }
+        </style>
+
+        <div class="container">
+            <h5>Xác nhận của Chủ nhiệm<br><br> @record2.ConfirmationsOfHomeroomTeacher </h5>
+            <h5>Xác nhận của Hiệu trưởng<br><br> @record2.ConfirmationsOfPrincipal</h5>
+        </div>
+    }
+}
+else if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <!-- Hiển thị thông báo "Học bạ của học sinh chưa được công bố" -->
+    <p style ="padding-top: 30px; padding-left: 20px; font-size: 16px; color: red;">@ViewBag.Message</p>
+}
+else
+{
+    <!-- Hiển thị thông báo khác -->
+    <p style="padding-top: 30px; padding-left: 20px; font-size: 16px; color: red;">Thông tin học bạ không có sẵn</p>
+}

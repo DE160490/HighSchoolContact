@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data.SqlClient;
 using System.Globalization;
+using System.Net.WebSockets;
 using X.PagedList;
 
 namespace FBT.Controllers;
@@ -79,8 +80,84 @@ public class StudentController : Controller
         }
     }
 
-//// ====================================== Schedule ======================================
-    // Get
+
+    //-------------------------------------------------------Học bạ học sinh
+    public ActionResult Transcript()
+    {
+        var username = HttpContext.Session.GetString("Username");
+        if (username == null)
+        {
+            return RedirectToAction("Login", "Login");
+        }
+        string StudentID = username.Split('$')[0];
+        ViewData["Avatar"] = StudentID;
+
+        using (var dbContext = new FbtContext())
+        {
+            //Lấy thông tin học sinh từ database
+           var student = dbContext.Students
+               .Include(s => s.Classes)
+               .Include(s => s.StudentNavigation)
+               .FirstOrDefault(s => s.StudentId == StudentID);
+            
+            if (student != null)
+            {
+                var schoolProfile = dbContext.SchoolProfiles.FirstOrDefault(sp => sp.StudentId == StudentID);
+
+                if (schoolProfile != null)
+                {
+                    if (schoolProfile.Status == 1)
+                    {
+                        var transcript = (from learningOutcome in dbContext.LearningOutcomes
+                                      join SchoolProfile in dbContext.SchoolProfiles on learningOutcome.SchoolProfileId equals schoolProfile.SchoolProfileId
+                                      join subject in dbContext.Subjects on learningOutcome.SubjectId equals subject.SubjectId
+                                      where SchoolProfile.StudentId == StudentID
+                                          select new
+                                      {
+                                          subject.SubjectName,
+                                          learningOutcome.Semester1Scores,
+                                          learningOutcome.Semester2Scores,
+                                          learningOutcome.FinalScores,
+                                          learningOutcome.ConfirmationsOfSubjectTeacher,
+                                          schoolProfile.Note,
+                                      }).ToList();
+                        var CountScores = transcript.Count();
+                        var studentname = dbContext.PersonInformations.Where(x => x.Id == StudentID).Select(x =>x.Fullname).FirstOrDefault();
+                        var scholeid = dbContext.SchoolProfiles.Where(x=>x.StudentId == StudentID).Select(x=>x.SchoolProfileId).FirstOrDefault();
+                        var transcript2 = (from resultOfEvaluation in dbContext.ResultOfEvaluations
+                                      join evaluateOutcome in dbContext.EvaluateEducationalOutcomes on resultOfEvaluation.SchoolProfileId equals evaluateOutcome.SchoolProfileId
+                                           join SchoolProfile in dbContext.SchoolProfiles on resultOfEvaluation.SchoolProfileId equals schoolProfile.SchoolProfileId
+                                           where schoolProfile.StudentId == StudentID && schoolProfile.SchoolProfileId == scholeid
+                                           select new
+                                      {
+                                          resultOfEvaluation.Semester1Evaluation,
+                                          resultOfEvaluation.Semester2Evaluation,
+                                          resultOfEvaluation.FinalEvaluation,
+                                          evaluateOutcome.Level,
+                                          evaluateOutcome.Comment,
+                                          evaluateOutcome.AbilitiesAndQualities,
+                                          schoolProfile.ConfirmationsOfHomeroomTeacher,
+                                          schoolProfile.ConfirmationsOfPrincipal
+                                      }).ToList();
+                        ViewBag.Transcript = transcript;
+                        ViewBag.transcript2 = transcript2;
+                        ViewBag.CountScores = CountScores;
+                        ViewBag.StudentName = studentname;
+                        return View();
+                    }
+                    else if (schoolProfile.Status == 0)
+                    {
+                        ViewBag.Message = "Học bạ của học sinh chưa được công bố. Nếu có vấn đề, hãy liên hệ đến giáo viên chủ nhiệm của bạn";
+                    }
+                }
+            }
+            ViewBag.Message = "Học bạ của học sinh chưa được công bố. Nếu có vấn đề, hãy liên hệ đến giáo viên chủ nhiệm của bạn";
+            return View();
+        }
+        
+    }
+
+ 
     public ActionResult TimeTable()
     {
         var username = HttpContext.Session.GetString("Username");
