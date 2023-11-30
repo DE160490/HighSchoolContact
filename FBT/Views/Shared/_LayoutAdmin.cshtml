@@ -17,7 +17,7 @@
                     <a class="icon_notification" href="#"> <i class="fa-regular fa-bell"></i> </a>
                     <a class="user" href="#">
                         <div class="avatar">
-                            <img class="img" src="~/FBT_Image/Avatar/HS00000000.jpeg" alt="Avatar">
+                            @* <img class="img" src="~/FBT_Image/Avatar/HS00000000.jpeg" alt="Avatar"> *@
                         </div>
                         <div class="text_avatar">
                             Admin <i class="fa-solid fa-caret-down"></i>
@@ -25,23 +25,25 @@
                     </a>
                 </div>
                 <div class="logout_form">
-                    <a class="logout" href="#"> <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất </a>
+                    <a class="logout" asp-controller="Logout" asp-action="Logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất </a>
                 </div>
             </div>
         </div>
         <div class="navbar_menus">
-            <a class="logo" href="#"><img src="~/FBT_Image/Avatar/Logo_ High School Contact.png" alt="Logo" srcset=""></a>
+            <a class="logo" href="#"><img src="~/img/Shared/Logo_ High School Contact.png" alt="Logo" srcset=""></a>
             <div class="menus">
-                <div class="menu">
-                    <a class="menu1" href="#">
-                        <i class="fa-solid fa-pen-to-square"></i> Quản lý Account
-                    </a>
-                </div>
-                <div class="menu">
-                    <a class="menu1" href="#">
-                        <i class="fa-solid fa-calendar-days"></i> Tạo Thời Khoá Biểu
-                    </a>
-                </div>
+                <ul>
+                    <li>
+                        <a class="menu1" asp-controller="Admin" asp-action="Index">
+                            <i class="fa-solid fa-pen-to-square"></i> Quản lý Account
+                        </a>
+                    </li>
+                    <li>
+                        <a class="menu1" asp-controller="Admin" asp-action="ManagerTimeTable">
+                            <i class="fa-solid fa-calendar-days"></i> Quản lý thời khoá biểu
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
         <div class="content">

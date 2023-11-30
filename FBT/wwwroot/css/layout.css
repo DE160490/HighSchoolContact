@@ -94,12 +94,12 @@
 }
 
 .user {
-    .text_avatar:hover
 
-{
-    color: #4472f0;
 }
 
+.text_avatar:hover
+{
+    color: #4472f0;
 }
 
 .logout:hover {
@@ -126,6 +126,7 @@
     position: absolute;
     top: 115px;
     left: 0px;
+    width: 100%;
 }
 
 .menu > a {
@@ -171,3 +172,34 @@
     box-shadow: 0px 0px 4px #091e424f, 0px 3px 5px #091e4226;
     border-radius: 2px;
 }
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+li {
+    padding: 15px 5px;
+}
+
+    li:hover {
+        background-color: #f0efff;
+    }
+
+        li:hover > a {
+            color: #4b49ac;
+        }
+
+    li > a {
+        display: block;
+        text-decoration: none;
+        width: 100%;
+        color: #000;
+    }
+
+        li > a > i {
+            width: 25px;
+            padding: 5px 10px;
+        }

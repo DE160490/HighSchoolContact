@@ -1,0 +1,38 @@
+﻿.container-fuild {
+    background-color: blueviolet;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.swap {
+    position: relative;
+    background-color: #FFFFFF;
+    width: 768px;
+    height: 484px;
+    justify-content: center;
+    text-align: center;
+}
+
+img {
+    position: absolute;
+    top: 15%;
+    left: 25%;
+    width: 415.49px;
+    height: 186px;
+}
+
+h3 {
+    position: absolute;
+    left: 34%;
+    bottom: 30%;
+}
+
+a {
+    text-decoration: none;
+    position: absolute;
+    left: 42%;
+    bottom: 20%;
+}

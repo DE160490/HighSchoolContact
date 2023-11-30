@@ -1,0 +1,63 @@
+﻿@model FBT.Models.Class
+
+@{
+    ViewData["Title"] = "Add Student";
+    Layout = "~/Views/Shared/_LayoutTeacher.cshtml";
+}
+
+<h2 style="text-align: center; margin: 20px 0;">Thêm Học Sinh</h2>
+
+@using (Html.BeginForm("AddStudent", "Teacher", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label for="classId">Class ID: @ViewBag.ClassId</label>
+        <input type="text" name="classId" class="form-control" hidden readonly value="@ViewData["ClassId"]" required />
+    </div>
+
+    <div class="form-group">
+        <label for="studentId">Student ID:</label>
+        <input type="text" name="studentId" class="form-control" required />
+    </div>
+
+    <!-- Thêm các trường dữ liệu khác cần thiết -->
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+}
+
+@if (ViewData["StudentIdError"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @ViewData["StudentIdError"]
+    </div>
+}
+
+<div class="back-link">
+    <a asp-action="ViewClassList">Danh sách lớp</a>
+</div>
+
+
+
+
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+  
+ 
+ 
+ 
+ 
+ 
+  
+ 
+ 
+ 
+ 
+ 

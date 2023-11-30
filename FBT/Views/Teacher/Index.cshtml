@@ -1,0 +1,88 @@
+﻿@model FBT.Models.Teacher
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_LayoutTeacher.cshtml";
+}
+@{
+    string studentId = Model.TeacherId;
+    string imgPath = $"~/img/Student/{studentId}.png";
+}
+
+
+
+<div class="container" >
+    <img src="@Url.Content(imgPath)" alt="logo" class="" style="width: 15%; margin: 40px 10%">
+    <h4>Thông tin Giáo Viên </h4>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            
+            <table class="table">
+                <tr>
+                    <th>@Html.DisplayNameFor(model=>model.TeacherNavigation.Fullname) </th>
+                    <td>@Html.DisplayFor(model=>model.TeacherNavigation.Fullname)</td>
+                </tr>
+
+                <tr>
+                    <th>@Html.DisplayNameFor(model=>model.TeacherNavigation.Gender)</th>
+                    <td>
+                        @{
+                            var gender = Model.TeacherNavigation.Gender;
+                            var genderText = gender.HasValue ? (gender.Value ? "Male" : "Female") : "Unknown";
+                        }
+                        @genderText
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>@Html.DisplayNameFor(model=>model.TeacherNavigation.Dob) </th>
+                    <td>@Html.DisplayFor(model=>model.TeacherNavigation.Dob)</td>
+                </tr>
+
+                <tr>
+                    <th>@Html.DisplayNameFor(model=>model.TeacherNavigation.PlaceOfBirth) </th>
+                    <td>@Html.DisplayFor(model=>model.TeacherNavigation.PlaceOfBirth)</td>
+                </tr>
+
+                <tr>
+                    <th>@Html.DisplayNameFor(model=>model.TeacherNavigation.PlaceOfResidence) </th>
+                    <td>@Html.DisplayFor(model=>model.TeacherNavigation.PlaceOfResidence)</td>
+                </tr>
+
+                <tr>
+                    <th>@Html.DisplayNameFor(model=>model.TeacherNavigation.Phone) </th>
+                    <td>@Html.DisplayFor(model=>model.TeacherNavigation.Phone)</td>
+                </tr>
+
+                <tr>
+                    <th>@Html.DisplayNameFor(model=>model.TeacherNavigation.Email) </th>
+                    <td>@Html.DisplayFor(model=>model.TeacherNavigation.Email)</td>
+                </tr>
+
+                <tr>
+                    <th>@Html.DisplayNameFor(model=>model.TeacherNavigation.Ethnic) </th>
+                    <td>@Html.DisplayFor(model=>model.TeacherNavigation.Ethnic)</td>
+                </tr>
+
+                <tr>
+                    <th>@Html.DisplayNameFor(model=>model.TeacherNavigation.Religion) </th>
+                    <td>@Html.DisplayFor(model=>model.TeacherNavigation.Religion)</td>
+                </tr>
+
+            </table>
+        </div>
+        <div class="col-md-6">
+            <table class="table">
+                <tr>
+                    <th>@Html.DisplayNameFor(model=>model.Position)</th>
+                    <td>@Html.DisplayFor(model=>model.Position)</td>
+                </tr>
+                <tr>
+                    <th>@Html.DisplayNameFor(model=>model.MainExpertise)</th>
+                    <td>@Html.DisplayFor(model=>model.MainExpertise)</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
