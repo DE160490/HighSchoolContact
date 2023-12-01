@@ -68,6 +68,10 @@ input {
     color: #F51203;
 }
 
+ul{
+    list-style: none;
+}
+
 @media only screen and (min-width: 260px) and (max-width: 319px) {
 
     .login_form {

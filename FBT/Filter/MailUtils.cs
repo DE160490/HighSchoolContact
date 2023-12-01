@@ -22,11 +22,11 @@ namespace FBT.Filter
             try
             {
                 smtpClient.Send(msg);
-                return "Gửi gmail thành công";
+                return "Send gmail success";
             }
             catch (Exception ex)
             {
-                return "Gửi gmail thất bại: " + ex.Message;
+                return "Send gmail fail: " + ex.Message;
             }
         }
     }

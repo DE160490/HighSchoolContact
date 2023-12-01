@@ -27,7 +27,7 @@ namespace FBT.Filter
                         || (role == "1" && controllerName != "TeacherController")
                         || (role == "3" && controllerName != "AdminController"))
                     {
-                        context.Result = new RedirectResult("/Login");
+                        context.Result = new RedirectResult("/Login/ErrorLogin");
                     }
                 }
             }

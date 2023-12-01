@@ -70,6 +70,7 @@ namespace FBT.Controllers
                     }
                     else
                     {
+                        ModelState.AddModelError("All", "Tài khoản hoặc mật khẩu không chính xác! Vui lòng nhập lại nhé!");
                         return View(account);
                     }
                 }
@@ -97,15 +98,17 @@ namespace FBT.Controllers
                     var personInformation = dbContext.PersonInformations.Include(a => a.Account).FirstOrDefault(a => a.Id == AccountId);
                     if (personInformation == null)
                     {
-                        ModelState.AddModelError("AccountId", "ID không tồn tại!");
+                        ModelState.AddModelError("AccountId", "ID không tồn tại! Vui lòng kiểm tra và nhập lại nhé!");
+                    } else
+                    {
+                        Random random = new Random();
+                        string randomString = new string(Enumerable.Repeat(0, 6).Select(i => (char)(random.Next(10) + '0')).ToArray());
+                        HttpContext.Session.SetString("UserResetPassword", randomString + "$" + AccountId);
+                        var message = MailUtils.SendGmail("High School Contact", "nguyencongthanh15082001@gmail.com", "High School Contact - Gửi mã xác nhận quên mật khẩu", "Mã xác nhận của bạn là: " + randomString + " .Vui lòng nhập mã xác nhận để đổi mật khẩu mới nhé!", "thanhncde160490@fpt.edu.vn", "dtldmdctuakimeqllniqhih");
+                        Console.WriteLine(message);
+                        Console.WriteLine(randomString);
                     }
 
-                    Random random = new Random();
-                    string randomString = new string(Enumerable.Repeat(0, 6).Select(i => (char)(random.Next(10) + '0')).ToArray());
-                    HttpContext.Session.SetString("UserResetPassword", randomString + "$" + AccountId);
-                    var message = MailUtils.SendGmail("thanhncde160490@fpt.edu.vn", "nguyencongthanh15082001@gmail.com", "Code Confirm Forgetpassword", randomString, "thanhncde160490@fpt.edu.vn", "password or keypassword");
-                    Console.WriteLine(message);
-                    Console.WriteLine(randomString);
                 }
                 return View();
             }
@@ -124,7 +127,8 @@ namespace FBT.Controllers
             {
                 if(code != codeSession.Split("$")[0])
                 {
-                    return RedirectToAction("ForgetPassword");
+                    ViewBag.ErrorMessage = "Mã xác nhận không chính xác";
+                    return View("ForgetPassword");
                 }
             }
             return RedirectToAction("ResetPassword");
@@ -157,6 +161,11 @@ namespace FBT.Controllers
                 }
             }
             return RedirectToAction("ResetPassword");
+        }
+
+        public IActionResult ErrorLogin()
+        {
+            return View();
         }
     }
 }
