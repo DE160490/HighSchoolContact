@@ -209,6 +209,10 @@ public class AdminController : Controller
                 }
                 return RedirectToAction("Index", "Admin");
             }
+            else
+            {
+                ViewData["Password"] = Password;
+            }
             return View(personInformation);
         }
     }
