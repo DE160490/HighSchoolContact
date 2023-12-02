@@ -131,6 +131,8 @@ select, input {
 
 table {
     justify-content: center;
+    border-collapse: collapse;
+    overflow: hidden;
 }
 
 th, td {
@@ -139,3 +141,22 @@ th, td {
     padding: 10px;
     font-size: 13px;
 }
+
+tbody tr:hover {
+    background-color: #bee3ff;
+}
+
+tbody td {
+    position: relative;
+}
+
+    tbody td:hover:before {
+        content: "";
+        position: absolute;
+        background-color: #d6dfff;
+        left: 0;
+        right: 0;
+        top: -9999px;
+        bottom: -9999px;
+        /* z-index: -1; */
+    }

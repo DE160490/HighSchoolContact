@@ -246,8 +246,40 @@ function updateSubjectTeacher() {
 
     const tableBody = document.getElementById('subject');
     const classID = document.querySelector("select[name='class']").value;
-    //console.log(classID)
+
     var id = 0;
+
+    const children = tableBody.querySelectorAll("*");
+
+    for (const child of children) {
+        if (child.hidden) {
+            child.remove();
+        } else {
+            child.remove();
+        }
+    }
+
+    var theadtable = document.createElement('thead');
+    var tr = document.createElement('tr');
+    var th1 = document.createElement('th');
+    th1.textContent = "Tên Môn Học";
+    tr.appendChild(th1);
+    var th2 = document.createElement('th');
+    th2.textContent = "ID Môn Học";
+    tr.appendChild(th2);
+    var th0 = document.createElement('th');
+    tr.appendChild(th0);
+    var th3 = document.createElement('th');
+    th3.textContent = "Tên Giáo Viên";
+    tr.appendChild(th3);
+    var th4 = document.createElement('th');
+    th4.textContent = "ID Giáo Viên";
+    tr.appendChild(th4);
+    theadtable.appendChild(tr);
+    tableBody.appendChild(theadtable);
+
+    var tbodytable = document.createElement('tbody');
+
 
     for (const subject of Subjects) {
         for (const teaching of SubjectTeachers.filter(item => item.ClassID === classID)) {
@@ -283,12 +315,13 @@ function updateSubjectTeacher() {
                         tableRow.appendChild(document.createElement('td'));
                         tableRow.appendChild(teacher_Name);
                         tableRow.appendChild(teacher_ID);
-                        tableBody.append(tableRow);
+                        tbodytable.append(tableRow);
                     }
                 }
             }
         }
     }
+    tableBody.appendChild(tbodytable);
 }
 
 
@@ -358,15 +391,13 @@ function updateDayofWeekSubject() {
     DayNumber.push("Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật");
     
     const parent = document.querySelector("div[class='field3']");
+    const children = parent.querySelectorAll("*");
 
-    for (var i = 0; i < 7; i++) {
-        if (CheckList[i] == true) {
-            var div1 = "div[class='" + DayList[i] + "']";
-            console.log(div1);
-            var delete1 = document.querySelector(div1);
-            if (delete1 != null) {
-                parent.removeChild(delete1);
-            }
+    for (const child of children) {
+        if (child.hidden) {
+            child.remove();
+        } else {
+            child.remove();
         }
     }
 
