@@ -209,10 +209,6 @@ public class AdminController : Controller
                 }
                 return RedirectToAction("Index", "Admin");
             }
-            else
-            {
-                ViewData["Password"] = Password;
-            }
             return View(personInformation);
         }
     }
@@ -387,7 +383,7 @@ public class AdminController : Controller
                                 .Include(s => s.Class.Grade.SchoolYear)
                                 .Include(s => s.Teacher.TeacherNavigation)
                                 .Include(s => s.Subject).ToList();
-                            //Console.WriteLine("Data: "+ scheduledb + " with " + schoolYear + " " + gradeID + " " + classID + " " + weekBeginConvert + " " + format);
+                            Console.WriteLine("Data: " + scheduledb + " with " + schoolYear + " " + gradeID + " " + classID + " " + weekBeginConvert + " " + format);
 
                             var cookieOptions = new CookieOptions();
                             cookieOptions.Expires = DateTime.Now.AddDays(1);
@@ -395,7 +391,10 @@ public class AdminController : Controller
                             Response.Cookies.Append("GradeID", gradeID);
                             Response.Cookies.Append("ClassID", classID);
                             Response.Cookies.Append("WeekBegins", weekBeginConvert.ToString());
-
+                           if(scheduledb  != null)
+                            {
+                                Console.WriteLine(scheduledb.ToString());
+                            }
                             return View(scheduledb);
 
                         }else if (!success1 || !success2)

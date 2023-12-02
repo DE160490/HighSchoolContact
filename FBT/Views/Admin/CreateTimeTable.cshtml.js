@@ -199,7 +199,7 @@ const main = async () => {
     //await console.log(SchoolYears);
     //await console.log(Grades);
     //await console.log(Classes);
-    await console.log(SubjectTeachers);
+    //await console.log(SubjectTeachers);
     //await console.log(Subjects);
     //await console.log(PersonInformations);
 };
@@ -246,7 +246,7 @@ function updateSubjectTeacher() {
 
     const tableBody = document.getElementById('subject');
     const classID = document.querySelector("select[name='class']").value;
-    console.log(classID)
+    //console.log(classID)
     var id = 0;
 
     for (const subject of Subjects) {
@@ -355,9 +355,22 @@ function updateDayofWeekSubject() {
 
     CheckList.push(checkMon, checkTue, checkWed, checkThu, checkFri, checkSat, checkSun);
     DayList.push("mon", "tue", "wed", "thu", "fri", "sat", "sun");
-    DayNumber.push("Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật")
+    DayNumber.push("Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật");
+    
+    const parent = document.querySelector("div[class='field3']");
+
     for (var i = 0; i < 7; i++) {
-        const parent = document.querySelector("div[class='field3']");
+        if (CheckList[i] == true) {
+            var div1 = "div[class='" + DayList[i] + "']";
+            console.log(div1);
+            var delete1 = document.querySelector(div1);
+            if (delete1 != null) {
+                parent.removeChild(delete1);
+            }
+        }
+    }
+
+    for (var i = 0; i < 7; i++) {
         if (CheckList[i] == true) {
             const div = document.createElement('div');
             const p = document.createElement('p');

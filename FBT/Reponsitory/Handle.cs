@@ -11,6 +11,10 @@ namespace FBT.Reponsitory
                 using(var contextdb = new FbtContext())
                 {
                     var scheduleID = contextdb.Schedules.Max(item => item.ScheduleId);
+                    if(scheduleID == null)
+                    {
+                        return "SCHE000001";
+                    }
                     string part1 = scheduleID.Substring(0, 4);
                     string part2 = scheduleID.Substring(4);
                     int convertInt = Convert.ToInt32(part2);
@@ -25,7 +29,7 @@ namespace FBT.Reponsitory
                     }
                     else if (convertInt <= 999)
                     {
-                        return part1 + "000" + convertInt;
+                        return part1 + "000" + convertInt;  
                     }
                     else if (convertInt <= 9999)
                     {

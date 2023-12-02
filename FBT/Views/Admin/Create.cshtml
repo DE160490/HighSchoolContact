@@ -100,12 +100,12 @@
     </div>
 
     <div id="mainExpertiseField" style="display: none;">
-        <label for="MainExpertise" class="">Main Expertise (Math, History,...)</label>
+        <label for="MainExpertise" class="">Main Expertise</label>
         <input id="MainExpertise" name="MainExpertise" class="form-control" />
     </div>
 
     <div id="positionField" style="display: none;">
-        <label for="Position" class="">Position (Giáo viên)</label>
+        <label for="Position" class="">Position</label>
         <input id="Position" name="Position" class="form-control" />
     </div>
 
@@ -123,7 +123,9 @@
 </form>
 
 <script>
-    function updateFieldsBasedOnRole(role) {
+    document.getElementById('Role').addEventListener('change', function () {
+        var role = this.value;
+
         // Show or hide fields based on the selected role
         document.getElementById('studentIdField').style.display = (role === 'HSP') ? 'block' : 'none';
         document.getElementById('jobField').style.display = (role === 'HSP') ? 'block' : 'none';
@@ -135,17 +137,8 @@
         document.getElementById('MainExpertise').disabled = (role !== 'HSE');
         document.getElementById('Position').disabled = (role !== 'HSE');
         document.getElementById('StudentID').disabled = (role !== 'HSP');
-    }
 
-    document.getElementById('Role').addEventListener('change', function () {
-        var role = this.value;
-
-        // lưu role vào local storage
-        localStorage.setItem('selectedRole', role);
-
-        updateFieldsBasedOnRole(role);
-
-        // dựa vào role để hiện thêm trường input
+        // Remove hidden fields from the form before submitting
         var form = document.forms[0];
         if (form) {
             form.addEventListener('submit', function () {
@@ -160,14 +153,5 @@
             });
         }
     });
-
-    // thực thi khi trang web được tải
-    window.onload = function () {
-        var role = localStorage.getItem('selectedRole');
-        if (role) {
-            document.getElementById('Role').value = role;
-            updateFieldsBasedOnRole(role);
-        }
-    };
 </script>
 

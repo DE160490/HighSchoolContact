@@ -453,6 +453,10 @@ async function convertTimeFormat2(time) {
         formgroup.setAttribute("class", "swap_form");
 
         var form = document.createElement('form');
+        form.setAttribute("method", "post");
+        form.setAttribute("asp-controller", "Admin");
+        form.setAttribute("asp-action", "UpdateTimeTable");
+
         var close = document.createElement('div');
         close.setAttribute("class", "close");
         var buttonClose = document.createElement('button');
