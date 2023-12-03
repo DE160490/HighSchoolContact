@@ -453,9 +453,6 @@ async function convertTimeFormat2(time) {
         formgroup.setAttribute("class", "swap_form");
 
         var form = document.createElement('form');
-        form.setAttribute("method", "post");
-        form.setAttribute("asp-controller", "Admin");
-        form.setAttribute("asp-action", "UpdateTimeTable");
 
         var close = document.createElement('div');
         close.setAttribute("class", "close");
@@ -600,12 +597,12 @@ async function editSchedule(scheduleID) {
     input.setAttribute("value", schedule);
 
     form.setAttribute("method", "post");
-    form.setAttribute("asp-controller", "Admin");
-    form.setAttribute("asp-action", "UpdateTimeTable");
+    form.setAttribute("action", "/Admin/UpdateTimeTable");
+
     form.appendChild(input);
 
     document.querySelector("div[class='view_timetable']").appendChild(form);
-        
+    
     form.submit();
 };
 
@@ -614,8 +611,7 @@ async function deleteSchedule(scheduleID) {
     console.log("Delete Schedule JS");
     var form = document.createElement("form");
     form.setAttribute("method", "post");
-    form.setAttribute("asp-controller", "Admin");
-    form.setAttribute("asp-action", "DeleteTimeTable");
+    form.setAttribute("action", "/Admin/DeleteTimeTable");
 
     var input = document.createElement("input");
     input.setAttribute("name", "scheduleDelete");
@@ -623,10 +619,69 @@ async function deleteSchedule(scheduleID) {
 
     form.appendChild(input);
 
+
     document.querySelector("div[class='view_timetable']").appendChild(form);
 
     form.submit();
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

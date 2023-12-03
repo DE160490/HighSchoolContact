@@ -357,20 +357,15 @@ public class AdminController : Controller
 
             if (schoolYeardb)
             {
-                //Console.WriteLine("=====================================================");
-                //Console.WriteLine("School Year: " + schoolYeardb);
                 var gradeNamedb = dbContext.Grades.Any(s => s.GradeId == gradeID);
                 if(gradeNamedb)
                 {
-                    //Console.WriteLine("Grade: " + gradeNamedb);
                     var classNamedb = dbContext.Classes.FirstOrDefault(s => s.ClassId == classID);
                     if(classNamedb != null)
                     {
-                        //Console.WriteLine("Classes: " + classNamedb.ClassId);
                         string [] time = weekBegin.Split("&&");
                         DateTime weekBeginConvert;
                         DateTime weekEndConvert;
-                        //Console.WriteLine(time[0] + " --- " + time[1]);
 
                         bool success1 = DateTime.TryParse(time[0], out weekBeginConvert);
                         bool success2 = DateTime.TryParse(time[1], out weekEndConvert);
@@ -379,7 +374,7 @@ public class AdminController : Controller
                         {
                             Console.WriteLine(weekBeginConvert + "    " + weekEndConvert);
                             DateTime format = weekEndConvert.AddHours(24).AddSeconds(-1);
-                            var scheduledb = dbContext.Schedules.Where(s => s.ClassId == classNamedb.ClassId && s.WeekBegins >= weekBeginConvert && s.WeekEnds <= weekEndConvert)
+                            var scheduledb = dbContext.Schedules.Where(s => s.ClassId == classNamedb.ClassId && s.DayOfWeek >= weekBeginConvert && s.DayOfWeek <= weekEndConvert)
                                 .Include(s => s.Class.Grade.SchoolYear)
                                 .Include(s => s.Teacher.TeacherNavigation)
                                 .Include(s => s.Subject).ToList();
@@ -393,19 +388,19 @@ public class AdminController : Controller
                             Response.Cookies.Append("WeekBegins", weekBeginConvert.ToString());
                            if(scheduledb  != null)
                             {
-                                Console.WriteLine(scheduledb.ToString());
+                                //Console.WriteLine(scheduledb.ToString());
                             }
                             return View(scheduledb);
 
                         }else if (!success1 || !success2)
                         {
-                            Console.WriteLine("Time is not true format!");
+                            //Console.WriteLine("Time is not true format!");
                         }
                     }
                 }
             }
         }
-        Console.WriteLine("Schedule empty: " + schoolYear + gradeID + classID + weekBegin);
+        //Console.WriteLine("Schedule empty: " + schoolYear + gradeID + classID + weekBegin);
         return View();
     }
 
@@ -442,16 +437,14 @@ public class AdminController : Controller
 
             if (success1 && success2)
             {
-                var scheduledb = dbContext.Schedules.Where(item => item.TeacherId == teacherID && item.WeekBegins >= weekBeginConvert && item.WeekEnds <= weekEndConvert)
+                var scheduledb = dbContext.Schedules.Where(item => item.TeacherId == teacherID && item.DayOfWeek >= weekBeginConvert && item.DayOfWeek <= weekEndConvert)
                             .Include(s => s.Class.Grade.SchoolYear)
                             .Include(s => s.Teacher.TeacherNavigation)
                             .Include(s => s.Subject).ToList();
-                Console.WriteLine("Teacher ID: " + teacherID + " Week Begins: " + weekBeginConvert + " Week Ends: " + weekEndConvert);
                 return View(scheduledb);
 
             }
         }
-        Console.WriteLine("Empty Teacher ID: " + teacherID + " Week Begins: " + datetime);
         return View();
     }
 
@@ -475,7 +468,6 @@ public class AdminController : Controller
     [HttpPost]
     public IActionResult CreateTimeTable(string obj)
     {
-        Console.WriteLine("Hello: Tester with " + obj);
         List<Schedule> schedules = new List<Schedule>();
         schedules = Handle.SplitScheduleInput(obj);
         schedules.ForEach(schedule =>
@@ -510,11 +502,9 @@ public class AdminController : Controller
     [HttpPost]
     public IActionResult UpdateTimeTable(string scheduleEdit)
     {
-        Console.WriteLine("Hello in UpdateTimeTable: " + scheduleEdit);
         string[] element = scheduleEdit.Split('$');
         if(element.Length > 0)
         {
-            Console.WriteLine("Hello 2 in UpdateTimeTable : " + scheduleEdit);
             using (var dbContext = new FbtContext())
             {
                 var schedule = dbContext.Schedules.FirstOrDefault(item => item.ScheduleId == element[0]);
@@ -542,7 +532,7 @@ public class AdminController : Controller
             }
 
         }   
-        return View();
+        return View("ManagerTimeTableOfTeacher");
     }
 
 //  --------------------------------------- Delete Schedule ---------------------------------------
@@ -551,16 +541,14 @@ public class AdminController : Controller
     { 
         using(var dbContext = new FbtContext())
         {
-            Console.WriteLine("Hello Here: " + scheduleDelete);
             var schedule = dbContext.Schedules.FirstOrDefault(item => item.ScheduleId == scheduleDelete);
             if(schedule != null)
             {
-                Console.WriteLine("Hello 2");
                 dbContext.Remove(schedule);
                 dbContext.SaveChanges();
             }
         }
-        return View();
+        return View("ManagerTimeTableOfTeacher");
     }
 
 //// ====================================== Get Data Javascript ======================================

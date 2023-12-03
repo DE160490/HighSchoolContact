@@ -142,21 +142,11 @@ th, td {
     font-size: 13px;
 }
 
+thead tr {
+    background-color: #6166ab;
+    color: #fff;
+}
+
 tbody tr:hover {
-    background-color: #bee3ff;
+    background-color: #bfc2ec;
 }
-
-tbody td {
-    position: relative;
-}
-
-    tbody td:hover:before {
-        content: "";
-        position: absolute;
-        background-color: #d6dfff;
-        left: 0;
-        right: 0;
-        top: -9999px;
-        bottom: -9999px;
-        /* z-index: -1; */
-    }

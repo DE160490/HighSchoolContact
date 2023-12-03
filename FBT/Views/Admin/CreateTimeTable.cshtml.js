@@ -262,18 +262,18 @@ function updateSubjectTeacher() {
     var theadtable = document.createElement('thead');
     var tr = document.createElement('tr');
     var th1 = document.createElement('th');
-    th1.textContent = "Tên Môn Học";
+    th1.textContent = "Tên môn học";
     tr.appendChild(th1);
     var th2 = document.createElement('th');
-    th2.textContent = "ID Môn Học";
+    th2.textContent = "ID môn học";
     tr.appendChild(th2);
     var th0 = document.createElement('th');
     tr.appendChild(th0);
     var th3 = document.createElement('th');
-    th3.textContent = "Tên Giáo Viên";
+    th3.textContent = "Tên giáo viên";
     tr.appendChild(th3);
     var th4 = document.createElement('th');
-    th4.textContent = "ID Giáo Viên";
+    th4.textContent = "ID giáo viên";
     tr.appendChild(th4);
     theadtable.appendChild(tr);
     tableBody.appendChild(theadtable);
@@ -413,11 +413,11 @@ function updateDayofWeekSubject() {
 
             inputSub.setAttribute("type", "text");
             inputSub.setAttribute("name", "subject_" + DayList[i]);
-            inputSub.setAttribute("placeholder", "Tên môn học");
+            inputSub.setAttribute("placeholder", "ID môn học");
 
             inputTeacher.setAttribute("type", "text");
             inputTeacher.setAttribute("name", "teaching_" + DayList[i]);
-            inputTeacher.setAttribute("placeholder", "Giáo viên giảng dạy");
+            inputTeacher.setAttribute("placeholder", "ID Giáo viên giảng dạy");
 
 
             div.appendChild(p);
@@ -435,11 +435,11 @@ function updateDayofWeekSubject() {
 
             inputSub.setAttribute("type", "text");
             inputSub.setAttribute("name", "subject_" + DayList[i]);
-            inputSub.setAttribute("placeholder", "Tên môn học");
+            inputSub.setAttribute("placeholder", "ID môn học");
 
             inputTeacher.setAttribute("type", "text");
             inputTeacher.setAttribute("name", "teaching_" + DayList[i]);
-            inputTeacher.setAttribute("placeholder", "Giáo viên giảng dạy");
+            inputTeacher.setAttribute("placeholder", "ID Giáo viên giảng dạy");
 
             div.appendChild(p);
             div.appendChild(inputSub);
