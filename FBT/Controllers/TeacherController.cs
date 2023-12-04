@@ -24,11 +24,11 @@ namespace FBT.Controllers
             }
             string TeacherID = username.Split('$')[0];
             ViewData["Avatar"] = TeacherID;
-            Teacher teacher = GetTeacherData(TeacherID);
+            Teacher? teacher = GetTeacherData(TeacherID);
             return View(teacher);
 
         }
-        private Teacher GetTeacherData(string teacherid)
+        private Teacher? GetTeacherData(string teacherid)
         {
             using (var dbcontext = new FbtContext())
             {
@@ -39,7 +39,7 @@ namespace FBT.Controllers
             }
         }
 
-//----------------------------------------------------------------------Lấy danh sách lớp-----------------------------------------------------------------------------------------------
+        //----------------------------------------------------------------------Lấy danh sách lớp-----------------------------------------------------------------------------------------------
         //Lớp chủ nhiệm
         public ActionResult ViewClassList(string classId)
         {
@@ -124,7 +124,7 @@ namespace FBT.Controllers
                     .Where(st => st.TeacherId == teacherId)
                     .Select(st => st.Class)
                     .Distinct()
-                    .Include(c => c.Students).ThenInclude(c=>c.StudentNavigation)// Đảm bảo tải thông tin sinh viên
+                    .Include(c => c.Students).ThenInclude(c => c.StudentNavigation)// Đảm bảo tải thông tin sinh viên
                     .ToList();
 
                 var subjectName = dbContext.SubjectTeachers
@@ -205,6 +205,7 @@ namespace FBT.Controllers
             return View();
         }
 
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult AddStudent(string teacherId, string studentId, string classId)
@@ -216,30 +217,48 @@ namespace FBT.Controllers
                 if (existingStudent != null)
                 {
                     Console.WriteLine($"HttpPost - teacherId: {teacherId}");
+
                     var schoolClass = dbContext.Classes.Include(c => c.Students).FirstOrDefault(c => c.ClassId == classId);
 
                     if (schoolClass != null)
                     {
-                        if (!schoolClass.Students.Any(s => s.StudentId == studentId))
-                        {
-                            var studentInOtherClass = dbContext.Classes
-                                .Where(c => c.ClassId != schoolClass.ClassId)
-                                .Any(c => c.Students.Any(s => s.StudentId == studentId));
-
-                            if (!studentInOtherClass)
+                        // Kiểm tra số lượng học sinh hiện tại và NumberOfStudent trong cùng một lệnh SQL
+                        var currentNumberOfStudents = dbContext.Classes
+                            .Where(c => c.ClassId == classId)
+                            .Select(c => new
                             {
-                                schoolClass.Students.Add(existingStudent);
-                                dbContext.SaveChanges();
-                                return RedirectToAction("ViewClassList", new { teacherId });
+                                CurrentNumberOfStudents = c.Students.Count()
+                            })
+                            .FirstOrDefault();
+
+                        // Kiểm tra nếu thêm học sinh vượt quá ngưỡng NumberOfStudent
+                        if (currentNumberOfStudents != null && currentNumberOfStudents.CurrentNumberOfStudents < schoolClass.NumberOfStudent)
+                        {
+                            if (!schoolClass.Students.Any(s => s.StudentId == studentId))
+                            {
+                                var studentInOtherClass = dbContext.Classes
+                                    .Where(c => c.ClassId != schoolClass.ClassId)
+                                    .Any(c => c.Students.Any(s => s.StudentId == studentId));
+
+                                if (!studentInOtherClass)
+                                {
+                                    schoolClass.Students.Add(existingStudent);
+                                    dbContext.SaveChanges();
+                                    return RedirectToAction("ViewClassList", new { teacherId });
+                                }
+                                else
+                                {
+                                    ViewData["StudentIdError"] = "Sinh viên này đã ở lớp khác.";
+                                }
                             }
                             else
                             {
-                                ViewData["StudentIdError"] = "Sinh viên này đã ở lớp khác.";
+                                ViewData["StudentIdError"] = "Sinh viên này đã tồn tại trong lớp.";
                             }
                         }
                         else
                         {
-                            ViewData["StudentIdError"] = "Sinh viên này đã tồn tại trong lớp.";
+                            ViewData["StudentIdError"] = "Lớp của bạn đã đầy không thể thêm học sinh.";
                         }
                     }
                     else
@@ -287,96 +306,6 @@ namespace FBT.Controllers
                 // Redirect về trang danh sách lớp
                 return RedirectToAction("ViewClassList", new { teacherId });
 
-            }
-        }
-
-        //lịch dạy 
-        public ActionResult TeacherTimeTable(string teacherId)
-        {
-            var username = HttpContext.Session.GetString("Username");
-            if (username == null)
-            {
-                return RedirectToAction("Login", "Login");
-            }
-
-            teacherId = username.Split('$')[0];
-            ViewData["Avatar"] = teacherId;
-            using (var dbContext = new FbtContext())
-            {
-                var teacher = dbContext.Teachers
-                    .Include(t => t.Classes)
-                    .Include(t => t.TeacherNavigation)
-                    .FirstOrDefault(t => t.TeacherId == teacherId);
-
-                if (teacher != null)
-                {
-                    var classId = teacher.Classes.FirstOrDefault()?.ClassId;
-
-                    var now = DateTime.Now;
-                    DateTime weekBegins = now.AddDays(-(int)now.DayOfWeek + (int)DayOfWeek.Monday).Date;
-                    DateTime weekEnds = weekBegins.AddDays(7).AddSeconds(-1);
-
-                    var schedules = dbContext.Schedules
-                        .Where(s => s.ClassId == classId && s.WeekBegins >= weekBegins && s.WeekEnds <= weekEnds)
-                        .Include(s => s.Teacher.TeacherNavigation)
-                        .Include(s => s.Subject)
-                        .ToList();
-
-                    ViewBag.TeacherName = teacher.TeacherNavigation.Fullname;
-                    ViewBag.WeekBegins = weekBegins;
-                    ViewBag.WeekEnds = weekEnds;
-                    ViewBag.TeacherId = teacherId;
-                    return View(schedules);
-                }
-
-                return View("Error");
-            }
-        }
-
-        [HttpPost]
-        public ActionResult TeacherTimeTable(string teacherId, string weekBegins, string weekEnds)
-        {
-            DateTime? weekBeginsDate = null;
-            DateTime? weekEndsDate = null;
-
-            if (DateTime.TryParseExact(weekBegins, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedWeekBegins))
-            {
-                weekBeginsDate = parsedWeekBegins;
-            }
-
-            if (DateTime.TryParseExact(weekEnds, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedWeekEnds))
-            {
-                weekEndsDate = parsedWeekEnds;
-            }
-
-            using (var dbContext = new FbtContext())
-            {
-                var teacher = dbContext.Teachers
-                    .Include(t => t.Classes)
-                    .Include(t => t.TeacherNavigation)
-                    .FirstOrDefault(t => t.TeacherId == teacherId);
-
-                if (teacher != null)
-                {
-                    var classId = teacher.Classes.FirstOrDefault()?.ClassId;
-
-                    if (classId != null)
-                    {
-                        var schedules = dbContext.Schedules
-                            .Where(s => s.ClassId == classId && s.WeekBegins >= weekBeginsDate && s.WeekEnds <= weekEndsDate)
-                            .Include(s => s.Teacher.TeacherNavigation)
-                            .Include(s => s.Subject)
-                            .ToList();
-
-                        ViewBag.TeacherName = teacher.TeacherNavigation.Fullname;
-                        ViewBag.WeekBegins = weekBeginsDate;
-                        ViewBag.WeekEnds = weekEndsDate;
-                        ViewBag.TeacherId = teacherId;
-                        return View(schedules);
-                    }
-                }
-
-                return View("Error");
             }
         }
 
@@ -436,7 +365,10 @@ namespace FBT.Controllers
                     ViewBag.SubjectName = firstSubjectName;
                     ViewData["Avatar"] = teacherId;
                     ViewBag.ClassName = selectedClassName.ClassName;
-                    ViewBag.ClassId   = selectedClassId;
+                    ViewBag.ClassId = selectedClassId;
+
+
+
                     // Trả về View chứa danh sách điểm cho học kỳ 1 và học kỳ 2
                     return View(Tuple.Create(scoresForSemester1, scoresForSemester2));
                 }
@@ -461,7 +393,7 @@ namespace FBT.Controllers
                 return RedirectToAction("Login", "Login");
             }
             string teacherId = username.Split('$')[0];
- 
+
             using (var dbContext = new FbtContext())
             {
                 // Lấy danh sách các môn học mà giáo viên đang dạy
@@ -475,11 +407,19 @@ namespace FBT.Controllers
                     var subjectIds = teacher.SubjectTeachers.Select(st => st.SubjectId).ToList();
                     var subjects = dbContext.Subjects.Where(s => subjectIds.Contains(s.SubjectId)).ToList();
                     var studentdb = dbContext.PersonInformations.Where(s => s.Id == studentId).FirstOrDefault();
+
                     Console.WriteLine(studentdb.Fullname);
                     ViewBag.Subjects = new SelectList(subjects, "SubjectId", "SubjectName");
                     ViewBag.TeacherId = teacherId;
                     ViewBag.StudentId = studentId;
                     ViewBag.StudentName = studentdb.Fullname;
+                    var studentClass = dbContext.Students
+                        .Where(s => s.StudentId == studentId)
+                        .Select(s => s.Classes.FirstOrDefault() != null ? s.Classes.FirstOrDefault().ClassId : null)
+                        .FirstOrDefault();
+
+                    // Xây dựng URL cho trang ViewScores theo lớp
+                    ViewBag.ViewScoresUrl = Url.Action("ViewScores", "Teacher", new { classId = studentClass });
                     return View();
                 }
 
@@ -529,8 +469,17 @@ namespace FBT.Controllers
                     dbContext.SaveChanges();
 
                     ViewData["Success"] = "Đã thêm điểm thành công.";
-                    // Chuyển hướng về trang ViewScores của kỳ học tương ứng
-                    return RedirectToAction("ViewScores");
+
+                    var studentClass = dbContext.Students
+                        .Where(s => s.StudentId == studentId)
+                        .Select(s => s.Classes.FirstOrDefault() != null ? s.Classes.FirstOrDefault().ClassId : null)
+                        .FirstOrDefault();
+
+                    // Xây dựng URL cho trang ViewScores theo lớp
+                    string viewScoresUrl = Url.Action("ViewScores", "Teacher", new { classId = studentClass });
+
+                    // Chuyển hướng về trang ViewScores theo lớp
+                    return Redirect(viewScoresUrl);
                 }
                 catch (DbUpdateException ex) when ((ex.InnerException as SqlException)?.Number == 2627)
                 {
@@ -546,7 +495,7 @@ namespace FBT.Controllers
                 return View();
             }
         }
-        
+
 
 
         // Trả về view để cập nhật điểm
@@ -603,11 +552,20 @@ namespace FBT.Controllers
                     var subjectIds = teacher.SubjectTeachers.Select(st => st.SubjectId).ToList();
                     var subjects = dbContext.Subjects.Where(s => subjectIds.Contains(s.SubjectId)).ToList();
                     var studentdb = dbContext.PersonInformations.Where(s => s.Id == studentId).FirstOrDefault();
+                    var studentClass = dbContext.Students
+                        .Where(s => s.StudentId == studentId)
+                        .Select(s => s.Classes.FirstOrDefault() != null ? s.Classes.FirstOrDefault().ClassId : null)
+                        .FirstOrDefault();
+
+                    // Xây dựng URL cho trang ViewScores theo lớp
+                    ViewBag.ViewScoresUrl = Url.Action("ViewScores", "Teacher", new { classId = studentClass });
                     ViewBag.Subjects = new SelectList(subjects, "SubjectId", "SubjectName");
                     ViewBag.TeacherId = teacherId;
                     ViewBag.StudentId = studentId;
                     ViewBag.StudentName = studentdb.Fullname;
-
+                    ViewBag.ExistingScore1 = existingScore.Coefficient1;
+                    ViewBag.ExistingScore2 = existingScore.Coefficient2;
+                    ViewBag.ExistingScore3 = existingScore.Coefficient3;
                     return View("UpdateScore");
                 }
 
@@ -666,10 +624,18 @@ namespace FBT.Controllers
                 // Lưu thay đổi vào database
                 dbContext.SaveChanges();
 
-               
+
                 ViewData["Success"] = "Đã cập nhật điểm thành công.";
-                // Chuyển hướng về trang ViewScores của kỳ học tương ứng
-                return RedirectToAction("ViewScores");
+                var studentClass = dbContext.Students
+                    .Where(s => s.StudentId == studentId)
+                    .Select(s => s.Classes.FirstOrDefault() != null ? s.Classes.FirstOrDefault().ClassId : null)
+                    .FirstOrDefault();
+
+                // Xây dựng URL cho trang ViewScores theo lớp
+                string viewScoresUrl = Url.Action("ViewScores", "Teacher", new { classId = studentClass });
+
+                // Chuyển hướng về trang ViewScores theo lớp
+                return Redirect(viewScoresUrl);
             }
         }
 
@@ -690,8 +656,16 @@ namespace FBT.Controllers
                     dbContext.Scores.Remove(scoreToDelete);
                     dbContext.SaveChanges();
 
-                    // Chuyển hướng hoặc trả về thông báo thành công
-                    return RedirectToAction("ViewScores");
+                    var studentClass = dbContext.Students
+                        .Where(s => s.StudentId == studentId)
+                        .Select(s => s.Classes.FirstOrDefault() != null ? s.Classes.FirstOrDefault().ClassId : null)
+                        .FirstOrDefault();
+
+                    // Xây dựng URL cho trang ViewScores theo lớp
+                    string viewScoresUrl = Url.Action("ViewScores", "Teacher", new { classId = studentClass });
+
+                    // Chuyển hướng về trang ViewScores theo lớp
+                    return Redirect(viewScoresUrl);
                 }
 
                 // Trả về thông báo lỗi nếu không tìm thấy điểm
@@ -700,14 +674,102 @@ namespace FBT.Controllers
             }
         }
 
+        public ActionResult ViewClassTranscript(string classId)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            if (username == null)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+
+            string teacherId = username.Split('$')[0];
+            ViewData["Avatar"] = teacherId;
+
+            // Thay đổi ở đây để lấy thông tin lớp
+            Class schoolClass = GetClassData(teacherId);
+            // Đặt giá trị vào ViewBag
+            ViewBag.TeacherId = teacherId;
+            ViewBag.ClassId = classId;
+            //   Console.WriteLine($"Class ID: {schoolClass?.ClassId}");
+            //   Console.WriteLine($"Class Name: {schoolClass?.ClassName}");
+            //   Console.WriteLine($"Number of Students: {schoolClass?.Students?.Count}");
+            // Console.WriteLine($"Teacher ID: {schoolClass?.Teachers?.FirstOrDefault()?.TeacherId}");
+
+            return View(schoolClass);
+        }
 
 
 
 
+        //lịch dạy 
+        public IActionResult TeacherTimeTable()
+        {
+            var username = HttpContext.Session.GetString("Username");
+            if (username == null)
+            {
+                return RedirectToAction("Login", "Login");
+            }
+            else
+            {
+                var teacherID = username.Split('$')[0];
+                var datetimeStart = DateTime.Now;
+                var datetimeEnd = DateTime.Now;
+                for (int i = 0; i < 8; i++)
+                {
+                    if (datetimeStart.DayOfWeek != DayOfWeek.Monday)
+                    {
+                        datetimeStart = datetimeStart.AddDays(-1);
+                    }
+                    if (datetimeEnd.DayOfWeek != DayOfWeek.Sunday)
+                    {
+                        datetimeEnd = datetimeEnd.AddDays(1);
+                    }
+                }
+                using (var dbContext = new FbtContext())
+                {
+                    ViewData["TeacherName"] = dbContext.PersonInformations.Where(item => item.Teacher.TeacherId == teacherID).Select(item => item.Fullname).FirstOrDefault();
+                    ViewData["Time"] = datetimeStart.ToString("dd/MM/yyyy") + " - " + datetimeEnd.ToString("dd/MM/yyyy");
+                    var schedule = dbContext.Schedules.Where(item => item.Teacher.TeacherId == teacherID && item.DayOfWeek >= datetimeStart && item.DayOfWeek <= datetimeEnd)
+                        .Include(s => s.Class.Grade.SchoolYear)
+                        .Include(s => s.Teacher.TeacherNavigation)
+                        .Include(s => s.Subject).ToList();
+                    return View(schedule);
+                }
+            }
+        }
+
+        [HttpPost]
+        public IActionResult TeacherTimeTable(string week)
+        {
+            var username = HttpContext.Session.GetString("Username");
+            using (var dbContext = new FbtContext())
+            {
+                var teacherID = username.Split('$')[0];
+                string[] time = week.Split("&&");
+                DateTime weekBeginConvert;
+                DateTime weekEndConvert;
+
+                bool success1 = DateTime.TryParse(time[0], out weekBeginConvert);
+                bool success2 = DateTime.TryParse(time[1], out weekEndConvert);
+                ViewData["TeacherName"] = dbContext.PersonInformations.Where(item => item.Teacher.TeacherId == teacherID).Select(item => item.Fullname).FirstOrDefault();
+                ViewData["Time"] = weekBeginConvert.ToString("dd/MM/yyyy") + " - " + weekEndConvert.ToString("dd/MM/yyyy");
+                Console.WriteLine(week);
+                Console.WriteLine(weekBeginConvert.ToString("dd/MM/yyyy") + "====" + weekBeginConvert.AddDays(6).ToString("dd/MM/yyyy"));
+                if (success1 && success2)
+                {
+                    var scheduledb = dbContext.Schedules.Where(item => item.TeacherId == teacherID && item.DayOfWeek >= weekBeginConvert && item.DayOfWeek <= weekEndConvert)
+                                .Include(s => s.Class.Grade.SchoolYear)
+                                .Include(s => s.Teacher.TeacherNavigation)
+                                .Include(s => s.Subject).ToList();
+                    return View(scheduledb);
+
+                }
+            }
+            return View();
+        }
 
 
     }
 }
-
 
 

@@ -1,11 +1,15 @@
 ﻿@model List<FBT.Models.Schedule>
 @{
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    var className = ViewData["ClassName"];
+    var error = ViewData["Error"];
 }
-@* <script src="https://code.jquery.com/jquery-latest.js"></script> *@
-@* <link rel="stylesheet" href="../Views/Admin/ManagerTimeTable.cshtml.css" /> *@
+
 <link rel="stylesheet" href="~/css/Schedule_ManagerTimeTable.css" />
 <div class="container-fluid time_table_content">
+    <div asp-validation-summary="All">
+        @error
+    </div>
     <div class="timetable_action">
         <h5>Thời khóa biểu</h5>
         <div class="groupbtn_timetable">
@@ -13,7 +17,6 @@
                 <button type="submit" style="border: none; background-color: #4B49AC; color: #FFFFFF; border-radius: 5px; font-size: 14px; padding: 5px;">
                     Tạo thời khóa biểu
                 </button>
-                @* <button type="submit"><a asp-controller="Admin" asp-action="TeachingSchedule">Tạo lịch giảng dạy</a></button> *@
             </form>
         </div>
     </div>
@@ -46,14 +49,10 @@
                     <button type="submit">Xuất thời khóa biểu</button>
 
                 </form>
-                <h6>Thời khóa biểu lớp 10A1</h6>
+                <h6>Thời khóa biểu lớp @className</h6>
             </div>
             <table class="time_schedule">
-                @* <div class="time_page">
-                    <button type="submit">Trước</button>
-                    <p>13/11/2023 - 19/11/2023</p>
-                    <button type="submit">Sau</button>
-                </div> *@
+
                 @if(Model != null)
                 {
                     <div class="time_page">
@@ -103,7 +102,6 @@
                                         @foreach(var subject in Model.Where(item => item.TimeStart == time && item.DayOfWeek.Value.DayOfWeek.ToString() == days)){
                                             if(subject.SubjectId != null)
                                             {
-                                                //scheduleID, classID, teacherID, subjectID, timeStart, timeEnd, className, teacherName, subjectName
                                                 <td ondblclick="viewSchedule('@subject.ScheduleId', '@subject.ClassId', '@subject.TeacherId', '@subject.SubjectId', '@subject.TimeStart', '@subject.TimeEnd', '@subject.Class.ClassName', '@subject.Teacher.TeacherNavigation.Fullname', '@subject.Subject.SubjectName')">
                                                     @subject.Subject?.SubjectName
                                                     <p class="teacher" style="margin: 8px 0 0 0; padding: 0; font-size: 9px; color: red;">@subject.Teacher?.TeacherNavigation.Fullname</p>
@@ -125,14 +123,10 @@
                 }
                 else
                 {
-                    <tr class="justify-content-end text-center">No Data</tr>
+                    <tr class="justify-content-end text-center">Chưa sắp xếp lịch học</tr>
                 }
 
             </table>
-           @*  <form method="post" asp-controller="Admin" asp-action="UpdateTimeTable">
-                <input name="scheduleEdit" value="SCHE000011$HSE0000020$Biology$08:15:00$09:00:00">
-                <button type="submit">Submit</button>
-            </form> *@
         </div>
     </div>
 </div>

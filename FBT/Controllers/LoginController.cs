@@ -19,8 +19,6 @@ namespace FBT.Controllers
             var userID = HttpContext.Session.GetString("Username");
             if (userID != null)
             {
-                Console.WriteLine(userID);
-                Console.WriteLine("Hello");
                 using (var dbContext = new FbtContext())
                 {
                     var accountID = userID.Split('$')[0].Trim();
@@ -101,12 +99,14 @@ namespace FBT.Controllers
                         ModelState.AddModelError("AccountId", "ID không tồn tại! Vui lòng kiểm tra và nhập lại nhé!");
                     } else
                     {
+                        HttpContext.Session.Remove("UserResetPassword");
                         Random random = new Random();
                         string randomString = new string(Enumerable.Repeat(0, 6).Select(i => (char)(random.Next(10) + '0')).ToArray());
                         HttpContext.Session.SetString("UserResetPassword", randomString + "$" + AccountId);
-                        var message = MailUtils.SendGmail("High School Contact", "nguyencongthanh15082001@gmail.com", "High School Contact - Gửi mã xác nhận quên mật khẩu", "Mã xác nhận của bạn là: " + randomString + " .Vui lòng nhập mã xác nhận để đổi mật khẩu mới nhé!", "thanhncde160490@fpt.edu.vn", "dtldmdctuakimeqllniqhih");
+                        var message = MailUtils.SendGmail("thanhncde160490@fpt.edu.vn", personInformation.Email, "High School Contact - Gửi mã xác nhận quên mật khẩu", "Mã xác nhận của bạn là: " + randomString + " .Vui lòng nhập mã xác nhận để đổi mật khẩu mới nhé!", "thanhncde160490@fpt.edu.vn", "adkdentlluluhfti");
                         Console.WriteLine(message);
-                        Console.WriteLine(randomString);
+                        ViewData["send"] = "Gửi mail thành công";
+                        //Console.WriteLine(randomString);
                     }
 
                 }

@@ -61,7 +61,7 @@ public class StudentController : Controller
         try { 
             using (var dbContext = new FbtContext())
             {
-                const int pageSize = 10; 
+                const int pageSize = 15; 
 
                 var scores = dbContext.Scores
                     .Include(s=> s.Subject)
@@ -175,7 +175,6 @@ public class StudentController : Controller
                     .Include(s => s.StudentNavigation)
                     .FirstOrDefault(s => s.StudentId == StudentID);
 
-                if (student != null) {
                     if (student != null) {
 
                         var classId = student.Classes.FirstOrDefault()?.ClassId;
@@ -197,7 +196,7 @@ public class StudentController : Controller
                         ViewBag.StudentId = StudentID;
                         return View(schedules);
                     }
-                }
+
             }
         }catch(SqlException e) { 
             Console.WriteLine(e.Message); 

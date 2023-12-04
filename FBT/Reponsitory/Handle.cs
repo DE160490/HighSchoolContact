@@ -69,22 +69,22 @@ namespace FBT.Reponsitory
                 {
                     if(!dbContext.Teachers.Any(item => item.TeacherId == schedule.TeacherId))
                     {
-                        Console.WriteLine("Don't have Teacher have ID: " + schedule.TeacherId);
+                        //Console.WriteLine("Don't have Teacher have ID: " + schedule.TeacherId);
                         return false;
                     }
                     if(!dbContext.Classes.Any(item => item.ClassId == schedule.ClassId))
                     {
-                        Console.WriteLine("Don't have ClassID: " + schedule.ClassId);
+                        //Console.WriteLine("Don't have ClassID: " + schedule.ClassId);
                         return false;
                     }
                     if(!dbContext.SubjectTeachers.Any(item => item.TeacherId == schedule.TeacherId &&  item.ClassId == schedule.ClassId))
                     {
-                        Console.WriteLine("Teacher have ID: " + schedule.TeacherId + " don't teaching class have ID: " + schedule.ClassId);
+                        //Console.WriteLine("Teacher have ID: " + schedule.TeacherId + " don't teaching class have ID: " + schedule.ClassId);
                         return false;
                     }
                     if(!dbContext.Subjects.Any(item => item.SubjectId == schedule.SubjectId))
                     {
-                        Console.WriteLine("Don't have SubjectID: " + schedule.SubjectId);
+                        //Console.WriteLine("Don't have SubjectID: " + schedule.SubjectId);
                         return false;
                     }
                     if (dbContext.Schedules.Any(item => item.ClassId == schedule.ClassId &&
@@ -94,7 +94,7 @@ namespace FBT.Reponsitory
                                                 item.TimeEnd > schedule.TimeStart &&
                                                 item.WeekEnds >= schedule.DayOfWeek))
                     {
-                        Console.WriteLine("Current time: " + schedule.TimeStart + " " + schedule.DayOfWeek + " schedule had exist!");
+                        //Console.WriteLine("Current time: " + schedule.TimeStart + " " + schedule.DayOfWeek + " schedule had exist!");
                         return false;
                     }
                 }
@@ -140,20 +140,20 @@ namespace FBT.Reponsitory
                 var getSchedule = scheduleinsert.ScheduleId + " " + scheduleinsert.TeacherId + " " + scheduleinsert.ClassId + " " + scheduleinsert.SubjectId + " " +
                 scheduleinsert.WeekBegins + " " + scheduleinsert.WeekEnds + " " + scheduleinsert.DayOfWeek + " " + scheduleinsert.Lecture + " " + scheduleinsert.TimeStart + " " + scheduleinsert.TimeEnd;
                 Console.WriteLine(getSchedule);
-
-                if (checkValidateSchedule(scheduleinsert))
-                {
-                    //using (var dbContext = new FbtContext())
-                    //{
-                    //    dbContext.Schedules.Add(scheduleinsert);
-                    //    dbContext.SaveChanges();
-                    //}
-                    list.Add(scheduleinsert);
-                }
-                else
-                {
-                    Console.WriteLine("Day: " + scheduleinsert.DayOfWeek + " Database insert not success!");
-                }
+                list.Add(scheduleinsert);
+                //if (checkValidateSchedule(scheduleinsert))
+                //{
+                //    //using (var dbContext = new FbtContext())
+                //    //{
+                //    //    dbContext.Schedules.Add(scheduleinsert);
+                //    //    dbContext.SaveChanges();
+                //    //}
+                //    list.Add(scheduleinsert);
+                //}
+                //else
+                //{
+                //    //Console.WriteLine("Day: " + scheduleinsert.DayOfWeek + " Database insert not success!");
+                //}
 
             }
             return list;

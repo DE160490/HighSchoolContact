@@ -505,6 +505,7 @@ async function convertTimeFormat2(time) {
         input2.setAttribute("value", subjectName);
         input2.setAttribute("oninput", "searchSubject('" + classID + "')");
         input2.setAttribute("placeholder", "Tên môn học");
+        input2.setAttribute("required", "true");
         labelinput_form2.appendChild(input2);
 
         //// Giáo Viên
@@ -526,6 +527,7 @@ async function convertTimeFormat2(time) {
         input3.setAttribute("value", teacherName);
         input3.setAttribute("oninput", "searchTeacher('" + classID + "')");
         input3.setAttribute("placeholder", "Họ tên giáo viên");
+        input3.setAttribute("required", "true");
         labelinput_form3.appendChild(input3);
 
         //// Thời Gian Bắt Đầu
@@ -589,6 +591,9 @@ async function editSchedule(scheduleID) {
     var timeEnd = document.querySelector("input[name='timeEnd']");
 
     var schedule = scheduleID + "$" + teacherID.value + "$" + subjectID.value + "$" + timeStart.value + "$" + timeEnd.value;
+    if (scheduleID.trim() === ' ' || teacherID.value.trim() === ' ' || subjectID.value.trim() === ' ' || timeStart.value.trim() === ' ' || timeEnd.value.trim() == ' ') {
+        return;
+    }
 
     var form = document.createElement("form");
 

@@ -352,7 +352,7 @@ public class AdminController : Controller
             //ViewBag.Grades = dbContext.Grades.ToList();
             //ViewBag.Class = dbContext.Classes.ToList();
             //ViewBag.WeekSchedules = dbContext.Schedules.Select(item => item.WeekBegins).Distinct().ToList();
-
+            ViewData["ClassName"] = dbContext.Classes.Where(item => item.ClassId == classID).Select(item => item.ClassName).FirstOrDefault();
             var schoolYeardb = dbContext.SchoolYears.Any(s => s.SchoolYearId == schoolYear);
 
             if (schoolYeardb)
@@ -373,6 +373,7 @@ public class AdminController : Controller
                         if (success1 && success2)
                         {
                             Console.WriteLine(weekBeginConvert + "    " + weekEndConvert);
+
                             DateTime format = weekEndConvert.AddHours(24).AddSeconds(-1);
                             var scheduledb = dbContext.Schedules.Where(s => s.ClassId == classNamedb.ClassId && s.DayOfWeek >= weekBeginConvert && s.DayOfWeek <= weekEndConvert)
                                 .Include(s => s.Class.Grade.SchoolYear)
@@ -428,6 +429,7 @@ public class AdminController : Controller
     {
         using(var dbContext = new FbtContext())
         {
+            ViewData["TeacherName"] = dbContext.PersonInformations.Where(item => item.Id == teacherID).Select(item => item.Fullname).FirstOrDefault();
             string[] time = datetime.Split("&&");
             DateTime weekBeginConvert;
             DateTime weekEndConvert;
@@ -474,24 +476,55 @@ public class AdminController : Controller
         {
             using(var dbContext = new FbtContext())
             {
+                var check = true;
+                if (!dbContext.Teachers.Any(item => item.TeacherId == schedule.TeacherId))
+                {
+                    ViewData["Error"] = "Don't have Teacher have ID: " + schedule.TeacherId;
+                    check = false;
+                }
+                if (!dbContext.Classes.Any(item => item.ClassId == schedule.ClassId))
+                {
+
+                    ViewData["Error"] = "Don't have ClassID: " + schedule.ClassId;
+                    check = false;
+                }
+                if (!dbContext.SubjectTeachers.Any(item => item.TeacherId == schedule.TeacherId && item.ClassId == schedule.ClassId))
+                {
+
+                    ViewData["Error"] = "Teacher have ID: " + schedule.TeacherId + " don't teaching class have ID: " + schedule.ClassId;
+                    check = false;
+                }
+                if (!dbContext.Subjects.Any(item => item.SubjectId == schedule.SubjectId))
+                {
+
+                    ViewData["Error"] = "Don't have SubjectID: " + schedule.SubjectId;
+                    check = false;
+                }
+
                 var scheduleCheck = dbContext.Schedules.Any(item => item.ClassId == schedule.ClassId && item.DayOfWeek == schedule.DayOfWeek && item.TimeStart == schedule.TimeStart && item.TimeEnd == schedule.TimeEnd);
                 if (!scheduleCheck)
                 {
                     var scheduleCheck2 = dbContext.Schedules.Any(item => item.TeacherId == schedule.TeacherId && item.DayOfWeek == schedule.DayOfWeek && item.TimeStart == schedule.TimeStart && item.TimeEnd == schedule.TimeEnd);
                     if (!scheduleCheck2)
                     {
-                        schedule.ScheduleId = Handle.CreateScheduleID();
-                        dbContext.Schedules.Add(schedule);
-                        dbContext.SaveChanges();
+                        if(check)
+                        {
+                            schedule.ScheduleId = Handle.CreateScheduleID();
+                            dbContext.Schedules.Add(schedule);
+                            dbContext.SaveChanges();
+
+                        }
                     }
                     else
                     {
-                        ModelState.AddModelError("FailCreate", "Giờ học: " + schedule.TimeStart + " - " + schedule.TimeEnd + " đã được sắp xếp cho giáo viên. Vui lòng kiểm tra lại trước khi nhập vào!");
+                        ModelState.AddModelError("FailCreate", "Giờ học: " + schedule.TimeStart + " - " + schedule.TimeEnd + " " + schedule.DayOfWeek.Value.DayOfWeek + " đã được sắp xếp cho giáo viên. Vui lòng kiểm tra lại trước khi nhập vào!");
+                        ViewData["Error"] = "Giờ học: " + schedule.TimeStart + " - " + schedule.TimeEnd + " " + schedule.DayOfWeek + " " + schedule.DayOfWeek.Value.DayOfWeek + " đã được sắp xếp cho giáo viên. Vui lòng kiểm tra lại trước khi nhập vào!";
                     }
                 }
                 else
                 {
-                    ModelState.AddModelError("FailCreate", "Giờ học: " + schedule.TimeStart + " - " + schedule.TimeEnd + " đã có. Vui lòng kiểm tra lại trước khi nhập vào!");
+                    ModelState.AddModelError("FailCreate", "Giờ học: " + schedule.TimeStart + " - " + schedule.TimeEnd + " " + schedule.DayOfWeek.Value.DayOfWeek + " đã có. Vui lòng kiểm tra lại trước khi nhập vào!");
+                    ViewData["Error"] = "Giờ học: " + schedule.TimeStart + " - " + schedule.TimeEnd + " " + schedule.DayOfWeek + " " + schedule.DayOfWeek.Value.DayOfWeek + " đã có. Vui lòng kiểm tra lại trước khi nhập vào!";
                 }
             }
         });
@@ -519,12 +552,25 @@ public class AdminController : Controller
 
                         if(TimeSpan.TryParse(element[3], out updateTimeStart) && TimeSpan.TryParse(element[4], out updateTimeEnd) && updateTimeStart <= updateTimeEnd)
                         {
-                            schedule.SubjectId = element[2];
-                            schedule.TeacherId = element[1];
-                            schedule.TimeStart = updateTimeStart;
-                            schedule.TimeEnd = updateTimeEnd;
-                            dbContext.Update(schedule);
-                            dbContext.SaveChanges();
+                            var db = dbContext.Schedules.Any(item => item.ScheduleId != element[0] && item.DayOfWeek == schedule.DayOfWeek && item.TimeStart == updateTimeEnd && item.TimeEnd == updateTimeEnd );
+                            if (!db)
+                            {
+                                schedule.SubjectId = element[2];
+                                schedule.TeacherId = element[1];
+                                schedule.TimeStart = updateTimeStart;
+                                schedule.TimeEnd = updateTimeEnd;
+                                dbContext.Update(schedule);
+                                dbContext.SaveChanges();
+                                ViewData["Error"] = "Cập nhật thành công";
+                            }
+                            else
+                            {
+                                ViewData["Error"] = "Cập nhật thất bại";
+                            }
+                        }
+                        else
+                        {
+                            ViewData["Error"] = "Cập nhật thất bại";
                         }
                         
                     }
@@ -532,7 +578,7 @@ public class AdminController : Controller
             }
 
         }   
-        return View("ManagerTimeTableOfTeacher");
+        return View("ManagerTimeTable");
     }
 
 //  --------------------------------------- Delete Schedule ---------------------------------------
@@ -548,7 +594,7 @@ public class AdminController : Controller
                 dbContext.SaveChanges();
             }
         }
-        return View("ManagerTimeTableOfTeacher");
+        return View("ManagerTimeTable");
     }
 
 //// ====================================== Get Data Javascript ======================================

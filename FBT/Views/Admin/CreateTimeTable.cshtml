@@ -1,11 +1,14 @@
 ﻿@model List<FBT.Models.Schedule>
 @{
     Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
+    var error = ViewData["Error"];
 }
 
 <link rel="stylesheet" href="~/css/Schedule_CreateTimeTable.css">
-@* <link rel="stylesheet" href="../Views/Admin/CreateTimeTable.cshtml.js"/> *@
 <div class="create">
+    <div asp-validation-summary="All">
+        @error
+    </div>
     <form>
         <div class="row field1">
             <div class="col-2 schoolyear_class">
@@ -20,9 +23,6 @@
                     <option value="Morning">Buổi sáng</option>
                     <option value="Afternoon">Buổi chiều</option>
                 </select>
-                <div asp-validation-summary="ModelOnly">
-                    @Html.ValidationMessage("FailCreate");
-                </div>
             </div>
             <div class="col-2 weekbegin">
                 <p>Tuần bắt đầu</p>

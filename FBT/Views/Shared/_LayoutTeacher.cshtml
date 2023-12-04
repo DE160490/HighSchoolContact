@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,10 +6,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:500,400,600|Manrope:600" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <link rel="stylesheet" href="~/css/layout.css">
     <title>Home</title>
 </head>
 <body>
+    @{
+        var teacherID = @ViewData["Avatar"];
+        var imgString = $"~/img/Teacher/{teacherID}.png";
+    }
     <div class="container-fuild">
         <div class="header">
             <div class="navbar_action">
@@ -20,7 +25,7 @@
                             <img class="img" src="~/img/Teacher/HSE0000001.png" alt="Avatar">
                         </div>
                         <div class="text_avatar">
-                            Admin <i class="fa-solid fa-caret-down"></i>
+                            Teacher <i class="fa-solid fa-caret-down"></i>
                         </div>
                     </a>
                 </div>
@@ -33,10 +38,18 @@
             <a class="logo" href="#"><img src="~/img/Shared/Logo_ High School Contact.png" alt="Logo" srcset=""></a>
             <div class="menus">
                 <ul>
-                    <li><a asp-controller="Teacher" asp-action="Index"><i class="fa-solid fa-house"></i> Thống kê tổng quan</a></li>
+                    <li><a asp-controller="Teacher" asp-action="Index" asp-route-id="@teacherID"><i class="fa-solid fa-house"></i> Thống kê tổng quan</a></li>
                     <li><a asp-controller="Teacher" asp-action="TeacherTimeTable"><i class="fa-solid fa-calendar-days"></i> Lịch dạy </a></li>
-                    <li><a href="#"><i class="fa-solid fa-book-open"></i> Chấm điểm </a></li>
-                    <li><a href="#"><i class="fa-solid fa-list"></i> Danh sách lớp Chủ Nhiệm </a></li>
+                    <li>
+                        <a class="menu1" asp-controller="Teacher" asp-action="ViewSubjectClasses" asp-route-id="@teacherID">
+                            <i class="fa-solid fa-book-open"></i> Bảng điểm
+                        </a>
+                    </li>
+                    <li>
+                        <a class="menu1" asp-controller="Teacher" asp-action="ViewClassList" asp-route-id="@teacherID">
+                            <i class="fa-solid fa-book-open"></i> Danh sách lớp do bạn chủ nhiệm
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>

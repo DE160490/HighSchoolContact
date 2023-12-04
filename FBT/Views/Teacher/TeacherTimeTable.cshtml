@@ -1,58 +1,32 @@
 ﻿@model List<FBT.Models.Schedule>
 @{
-    Layout = "~/Views/Shared/_LayoutAdmin.cshtml";
-    var teacherName = ViewData["TeacherName"];
+    Layout = "~/Views/Shared/_LayoutTeacher.cshtml";
 }
-@* <script src="https://code.jquery.com/jquery-latest.js"></script> *@
-@* <link rel="stylesheet" href="../Views/Admin/ManagerTimeTable.cshtml.css" /> *@
+
 <link rel="stylesheet" href="~/css/Schedule_ManagerTimeTable.css" />
+@{
+    var teacherName = ViewData["TeacherName"];
+    var timeweek = ViewData["Time"];
+}
 <div class="container-fluid time_table_content">
     <div class="timetable_action">
         <h5>Thời khóa biểu</h5>
-        <div class="groupbtn_timetable">
-            <form asp-controller="Admin" asp-action="CreateTimeTable" method="get">
-                <button type="submit" style="border: none; background-color: #4B49AC; color: #FFFFFF; border-radius: 5px; font-size: 14px; padding: 5px;">
-                    Tạo thời khóa biểu
-                </button>
-                @* <button type="submit"><a asp-controller="Admin" asp-action="TeachingSchedule">Tạo lịch giảng dạy</a></button> *@
-            </form>
-        </div>
     </div>
     <div class="content_timetable">
-        <div class="navication_timetable">
-        <form asp-controller="Admin" asp-action="ManagerTimeTable" method="get">
-            <button type="submit"> Thời khóa biểu theo lớp </button>
-        </form>
-        <form asp-controller="Admin" asp-action="ManagerTimeTableOfTeacher" method="get">
-            <button class="active" type="submit">Thời khóa biểu theo giáo viên </button>
-        </form>
-        </div>
         <div class="view_timetable">
-            <div class="groupview_action">
-                <form asp-controller="Admin" , asp-action="ManagerTimeTableOfTeacher" method="post">
-
-                    <select name="teacherID">
-                    </select>
-                    <select name="datetime">
-                    </select>
-                    <button type="submit">Xuất thời khóa biểu</button>
-
-                </form>
-                <h6>Lịch dạy của giáo viên @teacherName</h6>
+            <div class="groupview_action">            
+                    <h6>Lịch dạy của @teacherName</h6>
             </div>
             <table class="time_schedule">
-                @if (Model != null)
-                {
+               
                     <div class="time_page">
-                        @foreach (var weekstart in Model.Select(item => item.WeekBegins.Value.ToString("dd/MM/yyyy")).Distinct())
-                        {
-                            @foreach (var weekend in Model.Where(item => item.WeekBegins.Value.ToString("dd/MM/yyyy") == weekstart).Select(item => item.WeekEnds.Value.ToString("dd/MM/yyyy")).Distinct())
-                            {
-                                <p>@weekstart - @weekend</p>
-                            }
-                        }
+                        <div class="btn_before"></div>
+
+                        <p class="week">@timeweek</p>
+
+                        <div class="btn_last"></div>
                     </div>
-                }
+                
                 <tr>
                     <th colspan="2">Thời gian</th>
                     <th>Thứ hai</th>
@@ -121,4 +95,4 @@
         </div>
     </div>
 </div>
-<script src="../Views/Admin/ManagerTimeTableOfTeacher.cshtml.js"></script>           
+<script src="../Views/Teacher/TeacherTimeTable.cshtml.js"></script>           

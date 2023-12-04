@@ -5,14 +5,14 @@ loginButton.addEventListener('click', (event) => {
     const accountIdInput = document.getElementById('AccountId');
     const passwordInput = document.getElementById('Password');
 
-    if (accountIdInput.value === '') {
-        alert('Please enter your account ID.');
+    if (accountIdInput.value.trim() === '') {
+        alert('Vui lòng nhập Account ID.');
         accountIdInput.focus();
         return;
     }
 
-    if (passwordInput.value === '') {
-        alert('Please enter your password.');
+    if (passwordInput.value.trim() === '') {
+        alert('Vui lòng nhập Password.');
         passwordInput.focus();
         return;
     }

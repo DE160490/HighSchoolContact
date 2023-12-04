@@ -123,9 +123,7 @@
 </form>
 
 <script>
-    document.getElementById('Role').addEventListener('change', function () {
-        var role = this.value;
-
+    function updateFieldsBasedOnRole(role) {
         // Show or hide fields based on the selected role
         document.getElementById('studentIdField').style.display = (role === 'HSP') ? 'block' : 'none';
         document.getElementById('jobField').style.display = (role === 'HSP') ? 'block' : 'none';
@@ -137,8 +135,17 @@
         document.getElementById('MainExpertise').disabled = (role !== 'HSE');
         document.getElementById('Position').disabled = (role !== 'HSE');
         document.getElementById('StudentID').disabled = (role !== 'HSP');
+    }
 
-        // Remove hidden fields from the form before submitting
+    document.getElementById('Role').addEventListener('change', function () {
+        var role = this.value;
+
+        // lưu role vào local storage
+        localStorage.setItem('selectedRole', role);
+
+        updateFieldsBasedOnRole(role);
+
+        // dựa vào role để hiện thêm trường input
         var form = document.forms[0];
         if (form) {
             form.addEventListener('submit', function () {
@@ -153,5 +160,14 @@
             });
         }
     });
+
+    // thực thi khi trang web được tải
+    window.onload = function () {
+        var role = localStorage.getItem('selectedRole');
+        if (role) {
+            document.getElementById('Role').value = role;
+            updateFieldsBasedOnRole(role);
+        }
+    };
 </script>
 
